@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: dental-ai-postgres
+
+    environment:
+      POSTGRES_DB: dental_ai
+      POSTGRES_USER: dental_user
+      POSTGRES_PASSWORD: dental_password
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - dental_data:/var/lib/postgresql/data
+      - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+
+volumes:
+  dental_data:

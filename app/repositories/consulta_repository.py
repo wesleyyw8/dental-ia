@@ -1,0 +1,110 @@
+from app.database import conectar
+
+
+def listar_consultas_por_dentista_e_data(dentista_id: int, data: str):
+    with conectar() as conexao:
+        with conexao.cursor() as cursor:
+            cursor.execute("""
+                SELECT
+                    c.id,
+
+                    p.id AS paciente_id,
+                    p.nome AS paciente_nome,
+
+                    d.id AS dentista_id,
+                    d.nome AS dentista_nome,
+
+                    pr.id AS procedimento_id,
+                    pr.nome AS procedimento_nome,
+
+                    c.data_hora_inicio,
+                    c.data_hora_fim,
+                    c.status
+
+                FROM consultas c
+
+                INNER JOIN pacientes p
+                    ON p.id = c.paciente_id
+
+                INNER JOIN dentistas d
+                    ON d.id = c.dentista_id
+
+                INNER JOIN procedimentos pr
+                    ON pr.id = c.procedimento_id
+
+                WHERE c.dentista_id = %s
+                  AND DATE(c.data_hora_inicio) = %s
+                  AND c.status = 'agendada'
+
+                ORDER BY c.data_hora_inicio
+            """, (dentista_id, data))
+
+            return cursor.fetchall()
+
+def criar_consulta(
+    paciente_id: int,
+    dentista_id: int,
+    procedimento_id: int,
+    data_hora_inicio,
+    data_hora_fim
+):
+    with conectar() as conexao:
+        with conexao.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO consultas (
+                    paciente_id,
+                    dentista_id,
+                    procedimento_id,
+                    data_hora_inicio,
+                    data_hora_fim,
+                    status
+                )
+                VALUES (%s, %s, %s, %s, %s, 'agendada')
+                RETURNING id
+            """, (
+                paciente_id,
+                dentista_id,
+                procedimento_id,
+                data_hora_inicio,
+                data_hora_fim
+            ))
+
+            consulta = cursor.fetchone()
+
+            return consulta
+
+def listar_consultas():
+    with conectar() as conexao:
+        with conexao.cursor() as cursor:
+            cursor.execute("""
+                SELECT
+                    c.id,
+
+                    p.id AS paciente_id,
+                    p.nome AS paciente_nome,
+
+                    d.id AS dentista_id,
+                    d.nome AS dentista_nome,
+
+                    pr.id AS procedimento_id,
+                    pr.nome AS procedimento_nome,
+
+                    c.data_hora_inicio,
+                    c.data_hora_fim,
+                    c.status
+
+                FROM consultas c
+
+                INNER JOIN pacientes p
+                    ON p.id = c.paciente_id
+
+                INNER JOIN dentistas d
+                    ON d.id = c.dentista_id
+
+                INNER JOIN procedimentos pr
+                    ON pr.id = c.procedimento_id
+
+                ORDER BY c.data_hora_inicio
+            """)
+
+            return cursor.fetchall()

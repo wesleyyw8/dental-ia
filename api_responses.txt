@@ -1,0 +1,36 @@
+===== GET /pacientes =====
+[{"id":2,"nome":"João Santos","telefone":"11988880002","email":"joao@email.com"},{"id":1,"nome":"Wesley Rebelo","telefone":"11988880001","email":"wesley@email.com"}]
+
+
+===== GET /pacientes?telefone =====
+{"id":1,"nome":"Wesley Rebelo","telefone":"11988880001","email":"wesley@email.com"}
+
+
+===== GET /procedimentos =====
+[{"id":1,"nome":"Avaliação","descricao":"Consulta inicial para avaliação odontológica","duracao_minutos":30,"preco":150.0,"ativo":true},{"id":3,"nome":"Clareamento","descricao":"Clareamento dentário","duracao_minutos":60,"preco":600.0,"ativo":true},{"id":5,"nome":"Instalação de aparelho","descricao":"Instalação de aparelho ortodôntico","duracao_minutos":90,"preco":800.0,"ativo":true},{"id":2,"nome":"Limpeza","descricao":"Limpeza e profilaxia dentária","duracao_minutos":60,"preco":250.0,"ativo":true},{"id":4,"nome":"Manutenção ortodôntica","descricao":"Manutenção do aparelho ortodôntico","duracao_minutos":30,"preco":180.0,"ativo":true}]
+
+
+===== GET /dentistas =====
+[{"id":1,"nome":"Dra. Ana Silva","especialidade":"Clínico Geral","telefone":"11999990001","email":"ana@dentalai.com","ativo":true},{"id":2,"nome":"Dr. Carlos Souza","especialidade":"Ortodontia","telefone":"11999990002","email":"carlos@dentalai.com","ativo":true}]
+
+
+===== GET /dentistas?procedimento_id=2 =====
+[{"id":1,"nome":"Dra. Ana Silva","especialidade":"Clínico Geral","telefone":"11999990001","email":"ana@dentalai.com"},{"id":2,"nome":"Dr. Carlos Souza","especialidade":"Ortodontia","telefone":"11999990002","email":"carlos@dentalai.com"}]
+
+
+===== GET /dentistas?procedimento_id=5 =====
+[{"id":2,"nome":"Dr. Carlos Souza","especialidade":"Ortodontia","telefone":"11999990002","email":"carlos@dentalai.com"}]
+
+
+===== GET /disponibilidades =====
+[{"id":3,"dentista_id":2,"data":"2026-09-29","hora_inicio":"08:00:00","hora_fim":"12:00:00"},{"id":4,"dentista_id":2,"data":"2026-09-29","hora_inicio":"13:00:00","hora_fim":"17:00:00"}]
+
+
+===== GET /horarios =====
+{"procedimento":{"id":5,"nome":"Instalação de aparelho","descricao":"Instalação de aparelho ortodôntico","duracao_minutos":90,"preco":800.0},"disponibilidades":[{"id":3,"dentista_id":2,"data":"2026-09-29","hora_inicio":"08:00:00","hora_fim":"12:00:00"},{"id":4,"dentista_id":2,"data":"2026-09-29","hora_inicio":"13:00:00","hora_fim":"17:00:00"}],"consultas":[{"id":2,"paciente_id":2,"paciente_nome":"João Santos","dentista_id":2,"dentista_nome":"Dr. Carlos Souza","procedimento_id":2,"procedimento_nome":"Limpeza","data_hora_inicio":"2026-09-29T09:00:00","data_hora_fim":"2026-09-29T10:00:00","status":"agendada"},{"id":4,"paciente_id":2,"paciente_nome":"João Santos","dentista_id":2,"dentista_nome":"Dr. Carlos Souza","procedimento_id":5,"procedimento_nome":"Instalação de aparelho","data_hora_inicio":"2026-09-29T10:00:00","data_hora_fim":"2026-09-29T11:30:00","status":"agendada"},{"id":3,"paciente_id":1,"paciente_nome":"Wesley Rebelo","dentista_id":2,"dentista_nome":"Dr. Carlos Souza","procedimento_id":5,"procedimento_nome":"Instalação de aparelho","data_hora_inicio":"2026-09-29T14:00:00","data_hora_fim":"2026-09-29T15:30:00","status":"agendada"}],"horarios_disponiveis":["15:30"]}
+
+
+===== GET /consultas =====
+[{"id":2,"paciente_id":2,"paciente_nome":"João Santos","dentista_id":2,"dentista_nome":"Dr. Carlos Souza","procedimento_id":2,"procedimento_nome":"Limpeza","data_hora_inicio":"2026-09-29T09:00:00","data_hora_fim":"2026-09-29T10:00:00","status":"agendada"},{"id":4,"paciente_id":2,"paciente_nome":"João Santos","dentista_id":2,"dentista_nome":"Dr. Carlos Souza","procedimento_id":5,"procedimento_nome":"Instalação de aparelho","data_hora_inicio":"2026-09-29T10:00:00","data_hora_fim":"2026-09-29T11:30:00","status":"agendada"},{"id":1,"paciente_id":1,"paciente_nome":"Wesley Rebelo","dentista_id":1,"dentista_nome":"Dra. Ana Silva","procedimento_id":2,"procedimento_nome":"Limpeza","data_hora_inicio":"2026-09-29T14:00:00","data_hora_fim":"2026-09-29T15:00:00","status":"agendada"},{"id":3,"paciente_id":1,"paciente_nome":"Wesley Rebelo","dentista_id":2,"dentista_nome":"Dr. Carlos Souza","procedimento_id":5,"procedimento_nome":"Instalação de aparelho","data_hora_inicio":"2026-09-29T14:00:00","data_hora_fim":"2026-09-29T15:30:00","status":"agendada"}]
+
+
