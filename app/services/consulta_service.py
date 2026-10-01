@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 
 from app.repositories.procedimento_repository import buscar_procedimento_por_id
-from app.repositories.consulta_repository import criar_consulta
 from app.services.horario_service import buscar_horarios
 from app.repositories.consulta_repository import (
     criar_consulta,
     listar_consultas
 )
+from app.repositories.consulta_repository import cancelar_consulta
 
 def agendar_consulta(
     paciente_id: int,
@@ -52,3 +52,16 @@ def agendar_consulta(
 
 def buscar_consultas():
     return listar_consultas()
+
+def cancelar_consulta_por_id(consulta_id: int):
+    consulta = cancelar_consulta(consulta_id)
+
+    if not consulta:
+        return {
+            "erro": "Consulta não encontrada ou já está cancelada"
+        }
+
+    return {
+        "mensagem": "Consulta cancelada com sucesso",
+        "consulta_id": consulta["id"]
+    }

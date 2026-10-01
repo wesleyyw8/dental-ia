@@ -206,3 +206,76 @@ INSERT INTO consultas (
 VALUES
     (2, 2, 2, '2026-09-29 09:00:00', '2026-09-29 10:00:00', 'agendada'),
     (1, 2, 5, '2026-09-29 14:00:00', '2026-09-29 15:30:00', 'agendada');
+
+
+CREATE TABLE horarios_trabalho (
+  id SERIAL PRIMARY KEY,
+  dentista_id INTEGER NOT NULL REFERENCES dentistas(id),
+  dia_semana INTEGER NOT NULL,
+  hora_inicio TIME NOT NULL,
+  hora_fim TIME NOT NULL
+);
+
+INSERT INTO horarios_trabalho
+    (dentista_id, dia_semana, hora_inicio, hora_fim)
+VALUES
+    -- Dra. Ana - segunda a sexta
+    (1, 1, '08:00', '12:00'),
+    (1, 1, '13:00', '17:00'),
+    (1, 2, '08:00', '12:00'),
+    (1, 2, '13:00', '17:00'),
+    (1, 3, '08:00', '12:00'),
+    (1, 3, '13:00', '17:00'),
+    (1, 4, '08:00', '12:00'),
+    (1, 4, '13:00', '17:00'),
+    (1, 5, '08:00', '12:00'),
+    (1, 5, '13:00', '17:00'),
+
+    -- Dr. Carlos - segunda a sexta
+    (2, 1, '08:00', '12:00'),
+    (2, 1, '13:00', '17:00'),
+    (2, 2, '08:00', '12:00'),
+    (2, 2, '13:00', '17:00'),
+    (2, 3, '08:00', '12:00'),
+    (2, 3, '13:00', '17:00'),
+    (2, 4, '08:00', '12:00'),
+    (2, 4, '13:00', '17:00'),
+    (2, 5, '08:00', '12:00'),
+    (2, 5, '13:00', '17:00');
+
+
+CREATE TABLE excecoes_agenda (
+    id SERIAL PRIMARY KEY,
+    dentista_id INTEGER NOT NULL REFERENCES dentistas(id),
+    data DATE NOT NULL,
+    hora_inicio TIME,
+    hora_fim TIME,
+    tipo VARCHAR(20) NOT NULL,
+    descricao VARCHAR(255),
+
+    CHECK (
+        (tipo = 'folga' AND hora_inicio IS NULL AND hora_fim IS NULL)
+        OR
+        (tipo = 'bloqueio' AND hora_inicio IS NOT NULL AND hora_fim IS NOT NULL)
+    )
+);
+
+INSERT INTO excecoes_agenda
+    (dentista_id, data, tipo, descricao)
+VALUES
+    (1, '2026-10-12', 'folga', 'Nossa Senhora Aparecida'),
+    (2, '2026-10-12', 'folga', 'Nossa Senhora Aparecida'),
+
+    (1, '2026-11-02', 'folga', 'Finados'),
+    (2, '2026-11-02', 'folga', 'Finados'),
+
+    (1, '2026-11-20', 'folga', 'Dia da Consciência Negra'),
+    (2, '2026-11-20', 'folga', 'Dia da Consciência Negra'),
+
+    (1, '2026-12-25', 'folga', 'Natal'),
+    (2, '2026-12-25', 'folga', 'Natal');
+
+INSERT INTO excecoes_agenda
+    (dentista_id, data, hora_inicio, hora_fim, tipo, descricao)
+VALUES
+    (2, '2026-10-16', '13:00', '17:00', 'bloqueio', 'Folga à tarde');

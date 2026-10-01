@@ -108,3 +108,39 @@ def listar_consultas():
             """)
 
             return cursor.fetchall()
+
+def cancelar_consulta(consulta_id: int):
+    with conectar() as conexao:
+        with conexao.cursor() as cursor:
+            cursor.execute("""
+                UPDATE consultas
+                SET status = 'cancelada'
+                WHERE id = %s
+                  AND status = 'agendada'
+                RETURNING id
+            """, (consulta_id,))
+
+            return cursor.fetchone()
+
+def remarcar_consulta(
+    consulta_id: int,
+    data_hora_inicio,
+    data_hora_fim
+):
+    with conectar() as conexao:
+        with conexao.cursor() as cursor:
+            cursor.execute("""
+                UPDATE consultas
+                SET
+                    data_hora_inicio = %s,
+                    data_hora_fim = %s
+                WHERE id = %s
+                  AND status = 'agendada'
+                RETURNING id
+            """, (
+                data_hora_inicio,
+                data_hora_fim,
+                consulta_id
+            ))
+
+            return cursor.fetchone()

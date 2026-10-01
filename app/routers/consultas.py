@@ -6,6 +6,7 @@ from app.services.consulta_service import (
     agendar_consulta,
     buscar_consultas
 )
+from app.services.consulta_service import cancelar_consulta_por_id
 
 router = APIRouter(
     prefix="/consultas",
@@ -34,3 +35,7 @@ def criar(consulta: NovaConsulta):
 @router.get("")
 def listar():
     return buscar_consultas()
+
+@router.patch("/{consulta_id}/cancelar")
+def cancelar(consulta_id: int):
+    return cancelar_consulta_por_id(consulta_id)

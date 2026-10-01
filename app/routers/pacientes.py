@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-
+from pydantic import BaseModel
 from app.services.paciente_service import buscar_pacientes
-
+from app.services.paciente_service import cadastrar_paciente
 
 router = APIRouter(
     prefix="/pacientes",
@@ -12,3 +12,16 @@ router = APIRouter(
 @router.get("")
 def listar(telefone: str | None = None):
     return buscar_pacientes(telefone)
+
+class PacienteRequest(BaseModel):
+    nome: str
+    telefone: str
+    email: str
+
+@router.post("")
+def criar(request: PacienteRequest):
+    return cadastrar_paciente(
+        request.nome,
+        request.telefone,
+        request.email
+    )

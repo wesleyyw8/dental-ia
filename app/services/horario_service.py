@@ -3,26 +3,27 @@ from app.repositories.consulta_repository import listar_consultas_por_dentista_e
 from app.repositories.procedimento_repository import buscar_procedimento_por_id
 from app.repositories.dentista_repository import dentista_realiza_procedimento
 from datetime import datetime, timedelta
+from app.services.horario_trabalho_service import buscar_horarios_trabalho
+from app.services.excecao_agenda_service import buscar_excecoes
 
-def gerar_slots(disponibilidades, duracao_minutos: int):
+def gerar_slots(horarios_trabalho, data, duracao_minutos: int):
     slots = []
 
-    for disponibilidade in disponibilidades:
+    for horario_trabalho in horarios_trabalho:
         inicio = datetime.combine(
-            disponibilidade["data"],
-            disponibilidade["hora_inicio"]
+            data,
+            horario_trabalho["hora_inicio"]
         )
 
         fim = datetime.combine(
-            disponibilidade["data"],
-            disponibilidade["hora_fim"]
+            data,
+            horario_trabalho["hora_fim"]
         )
 
         horario = inicio
 
         while horario + timedelta(minutes=duracao_minutos) <= fim:
             slots.append(horario)
-            # slots.append(horario.strftime("%H:%M"))
             horario += timedelta(minutes=30)
 
     return slots
@@ -52,8 +53,21 @@ def buscar_horarios(dentista_id: int, procedimento_id: int, data: str):
     procedimento = buscar_procedimento_por_id(procedimento_id)
     disponibilidades = listar_disponibilidades(dentista_id, data)
 
+    data_obj = datetime.strptime(data, "%Y-%m-%d")
+    dia_semana = data_obj.isoweekday()
+    horarios_trabalho = buscar_horarios_trabalho(
+      dentista_id,
+      dia_semana
+    )
+
+    excecoes = buscar_excecoes(
+      dentista_id,
+      data
+    )
+
     slots = gerar_slots(
-        disponibilidades,
+        horarios_trabalho,
+        data_obj.date(),
         procedimento["duracao_minutos"]
     )
 
@@ -64,13 +78,18 @@ def buscar_horarios(dentista_id: int, procedimento_id: int, data: str):
     
     slots_disponiveis = []
     for slot in slots:
-      if not tem_conflito(
+      if tem_conflito_com_excecao(
           slot,
           procedimento["duracao_minutos"],
-          consultas
+          excecoes
       ):
+        continue
+      if not tem_conflito(
+        slot,
+        procedimento["duracao_minutos"],
+        consultas
+    ):
         slots_disponiveis.append(slot)
-
 
     return {
         "procedimento": procedimento,
@@ -81,3 +100,25 @@ def buscar_horarios(dentista_id: int, procedimento_id: int, data: str):
           for slot in slots_disponiveis
         ]
     }
+
+def tem_conflito_com_excecao(slot, duracao_minutos, excecoes):
+    fim_slot = slot + timedelta(minutes=duracao_minutos)
+
+    for excecao in excecoes:
+        if excecao["tipo"] == "folga":
+            return True
+
+        inicio_excecao = datetime.combine(
+            slot.date(),
+            excecao["hora_inicio"]
+        )
+
+        fim_excecao = datetime.combine(
+            slot.date(),
+            excecao["hora_fim"]
+        )
+
+        if slot < fim_excecao and fim_slot > inicio_excecao:
+            return True
+
+    return False

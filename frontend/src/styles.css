@@ -49,7 +49,7 @@ h1, h2, h3, .brand { font-family: 'Manrope', sans-serif; }
 .main-content { width: calc(100% - 250px); min-height: 100vh; margin-left: 250px; }
 .page { width: min(1360px, 100%); margin: 0 auto; padding: 52px clamp(28px, 5vw, 72px) 60px; }
 .mobile-header, .sidebar-backdrop { display: none; }
-.sidebar__close { display: none; }
+.sidebar .sidebar__close { display: none; }
 .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 34px; }
 .eyebrow { display: block; margin-bottom: 8px; color: #2e8577; font-size: 11px; font-weight: 800; letter-spacing: 1.7px; }
 .page-header h1 { margin-bottom: 7px; color: var(--ink); font-size: clamp(30px, 3vw, 42px); line-height: 1.08; letter-spacing: -1.6px; }
@@ -240,7 +240,7 @@ h1, h2, h3, .brand { font-family: 'Manrope', sans-serif; }
 @media (max-width: 800px) {
   .sidebar { transform: translateX(-100%); transition: transform .25s ease; }
   .sidebar--open { transform: translateX(0); }
-  .sidebar__close { position: absolute; top: 25px; right: 13px; display: grid; color: #b9ccc7; }
+  .sidebar .sidebar__close { position: absolute; top: 25px; right: 13px; display: grid; color: #b9ccc7; }
   .sidebar-backdrop { position: fixed; z-index: 35; inset: 0; display: block; width: 100%; border: 0; background: rgba(15,38,34,.42); }
   .main-content { width: 100%; margin-left: 0; }
   .mobile-header { display: flex; height: 64px; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.88); backdrop-filter: blur(10px); }
