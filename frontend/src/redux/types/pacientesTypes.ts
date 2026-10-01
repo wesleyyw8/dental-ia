@@ -7,6 +7,10 @@ export const PACIENTE_SEARCH_REQUEST = 'pacientes/searchRequest' as const
 export const PACIENTE_SEARCH_SUCCESS = 'pacientes/searchSuccess' as const
 export const PACIENTE_SEARCH_FAILURE = 'pacientes/searchFailure' as const
 export const PACIENTE_SEARCH_CLEAR = 'pacientes/searchClear' as const
+export const CRIAR_PACIENTE_REQUEST = 'pacientes/createRequest' as const
+export const CRIAR_PACIENTE_SUCCESS = 'pacientes/createSuccess' as const
+export const CRIAR_PACIENTE_FAILURE = 'pacientes/createFailure' as const
+export const CRIAR_PACIENTE_RESET = 'pacientes/createReset' as const
 
 export interface PacientesState {
   items: Paciente[]
@@ -15,6 +19,9 @@ export interface PacientesState {
   searching: boolean
   error: string | null
   searchError: string | null
+  creating: boolean
+  createError: string | null
+  created: Paciente | null
 }
 
 export type PacientesAction =
@@ -25,3 +32,7 @@ export type PacientesAction =
   | { type: typeof PACIENTE_SEARCH_SUCCESS; payload: Paciente }
   | { type: typeof PACIENTE_SEARCH_FAILURE; payload: string }
   | { type: typeof PACIENTE_SEARCH_CLEAR }
+  | { type: typeof CRIAR_PACIENTE_REQUEST }
+  | { type: typeof CRIAR_PACIENTE_SUCCESS; payload: Paciente }
+  | { type: typeof CRIAR_PACIENTE_FAILURE; payload: string }
+  | { type: typeof CRIAR_PACIENTE_RESET }

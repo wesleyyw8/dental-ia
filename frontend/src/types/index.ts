@@ -5,6 +5,12 @@ export interface Paciente {
   email: string
 }
 
+export interface NovoPaciente {
+  nome: string
+  telefone: string
+  email: string
+}
+
 export interface Procedimento {
   id: number
   nome: string
@@ -64,6 +70,13 @@ export interface CriarConsultaResponse {
   id?: number
   erro?: string
   [key: string]: unknown
+}
+
+export interface ConsultaMutationResponse {
+  id?: number
+  consulta_id?: number
+  mensagem?: string
+  erro?: string
 }
 
 export interface AsyncState {
