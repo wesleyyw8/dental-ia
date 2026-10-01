@@ -1,125 +1,82 @@
 from datetime import datetime, timedelta
 
+from app.repositories.consulta_repository import (
+    buscar_consulta_por_id,
+    cancelar_consulta,
+    criar_consulta,
+    listar_consultas,
+    remarcar_consulta,
+)
 from app.repositories.procedimento_repository import buscar_procedimento_por_id
 from app.services.horario_service import buscar_horarios
-from app.repositories.consulta_repository import (
-    criar_consulta,
-    listar_consultas
-)
-from app.repositories.consulta_repository import (
-  cancelar_consulta, 
-  buscar_consulta_por_id
-)
-from app.repositories.consulta_repository import remarcar_consulta
+
 
 def agendar_consulta(
-    paciente_id: int,
-    dentista_id: int,
-    procedimento_id: int,
-    data: str,
-    horario: str
+    paciente_id: int, dentista_id: int, procedimento_id: int, data: str, horario: str
 ):
     procedimento = buscar_procedimento_por_id(procedimento_id)
 
-    data_hora_inicio = datetime.strptime(
-        f"{data} {horario}",
-        "%Y-%m-%d %H:%M"
-    )
+    data_hora_inicio = datetime.strptime(f"{data} {horario}", "%Y-%m-%d %H:%M")
 
     data_hora_fim = data_hora_inicio + timedelta(
         minutes=procedimento["duracao_minutos"]
     )
 
-    horarios = buscar_horarios(
-    dentista_id,
-    procedimento_id,
-    data
-  )
+    horarios = buscar_horarios(dentista_id, procedimento_id, data)
 
     if "erro" in horarios:
-      return {
-      "erro": horarios["erro"]
-      }
+        return {"erro": horarios["erro"]}
 
     if horario not in horarios["horarios_disponiveis"]:
-      return {
-      "erro": "Horário não disponível"
-      }
+        return {"erro": "Horário não disponível"}
 
     return criar_consulta(
-        paciente_id,
-        dentista_id,
-        procedimento_id,
-        data_hora_inicio,
-        data_hora_fim
+        paciente_id, dentista_id, procedimento_id, data_hora_inicio, data_hora_fim
     )
+
 
 def buscar_consultas():
     return listar_consultas()
+
 
 def cancelar_consulta_por_id(consulta_id: int):
     consulta = cancelar_consulta(consulta_id)
 
     if not consulta:
-        return {
-            "erro": "Consulta não encontrada ou já está cancelada"
-        }
+        return {"erro": "Consulta não encontrada ou já está cancelada"}
 
-    return {
-        "mensagem": "Consulta cancelada com sucesso",
-        "consulta_id": consulta["id"]
-    }
+    return {"mensagem": "Consulta cancelada com sucesso", "consulta_id": consulta["id"]}
 
-def remarcar_consulta_por_id(
-    consulta_id: int,
-    data: str,
-    horario: str
-):
-  consulta = buscar_consulta_por_id(consulta_id)
 
-  if not consulta:
-      return {
-          "erro": "Consulta não encontrada"
-      }
+def remarcar_consulta_por_id(consulta_id: int, data: str, horario: str):
+    consulta = buscar_consulta_por_id(consulta_id)
 
-  if consulta["status"] != "agendada":
-    return {
-        "erro": "Esta consulta não pode ser remarcada"
-    }
+    if not consulta:
+        return {"erro": "Consulta não encontrada"}
 
-  horarios = buscar_horarios(
-    consulta["dentista_id"],
-    consulta["procedimento_id"],
-    data
-  )
+    if consulta["status"] != "agendada":
+        return {"erro": "Esta consulta não pode ser remarcada"}
 
-  if "erro" in horarios:
-    return {
-      "erro": horarios["erro"]
-    }
+    horarios = buscar_horarios(
+        consulta["dentista_id"], consulta["procedimento_id"], data
+    )
 
-  if horario not in horarios["horarios_disponiveis"]:
-    return {
-      "erro": "Horário não disponível"
-    }
+    if "erro" in horarios:
+        return {"erro": horarios["erro"]}
 
-  data_hora_inicio = datetime.strptime(
-    f"{data} {horario}",
-    "%Y-%m-%d %H:%M"
-  )
+    if horario not in horarios["horarios_disponiveis"]:
+        return {"erro": "Horário não disponível"}
 
-  procedimento = buscar_procedimento_por_id(
-    consulta["procedimento_id"]
-  )
+    data_hora_inicio = datetime.strptime(f"{data} {horario}", "%Y-%m-%d %H:%M")
 
-  data_hora_fim = data_hora_inicio + timedelta(
-    minutes=procedimento["duracao_minutos"]
-  )
+    procedimento = buscar_procedimento_por_id(consulta["procedimento_id"])
 
-  consulta_atualizada = remarcar_consulta(
-    consulta_id,
-    data_hora_inicio,
-    data_hora_fim
-  )
+    data_hora_fim = data_hora_inicio + timedelta(
+        minutes=procedimento["duracao_minutos"]
+    )
 
-  return consulta_atualizada
+    consulta_atualizada = remarcar_consulta(
+        consulta_id, data_hora_inicio, data_hora_fim
+    )
+
+    return consulta_atualizada

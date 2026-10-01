@@ -2,11 +2,7 @@ from fastapi import APIRouter
 
 from app.services.dentista_service import buscar_dentistas
 
-
-router = APIRouter(
-    prefix="/dentistas",
-    tags=["Dentistas"]
-)
+router = APIRouter(prefix="/dentistas", tags=["Dentistas"])
 
 
 @router.get("")

@@ -2,9 +2,9 @@ from app.database import conectar
 
 
 def listar_horarios_trabalho(dentista_id: int, dia_semana: int):
-    with conectar() as conexao:
-        with conexao.cursor() as cursor:
-            cursor.execute("""
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute(
+            """
                 SELECT
                     id,
                     dentista_id,
@@ -15,6 +15,8 @@ def listar_horarios_trabalho(dentista_id: int, dia_semana: int):
                 WHERE dentista_id = %s
                   AND dia_semana = %s
                 ORDER BY hora_inicio
-            """, (dentista_id, dia_semana))
+            """,
+            (dentista_id, dia_semana),
+        )
 
-            return cursor.fetchall()
+        return cursor.fetchall()

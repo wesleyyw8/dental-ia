@@ -2,9 +2,9 @@ from app.database import conectar
 
 
 def listar_consultas_por_dentista_e_data(dentista_id: int, data: str):
-    with conectar() as conexao:
-        with conexao.cursor() as cursor:
-            cursor.execute("""
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute(
+            """
                 SELECT
                     c.id,
 
@@ -37,20 +37,23 @@ def listar_consultas_por_dentista_e_data(dentista_id: int, data: str):
                   AND c.status = 'agendada'
 
                 ORDER BY c.data_hora_inicio
-            """, (dentista_id, data))
+            """,
+            (dentista_id, data),
+        )
 
-            return cursor.fetchall()
+        return cursor.fetchall()
+
 
 def criar_consulta(
     paciente_id: int,
     dentista_id: int,
     procedimento_id: int,
     data_hora_inicio,
-    data_hora_fim
+    data_hora_fim,
 ):
-    with conectar() as conexao:
-        with conexao.cursor() as cursor:
-            cursor.execute("""
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute(
+            """
                 INSERT INTO consultas (
                     paciente_id,
                     dentista_id,
@@ -61,22 +64,24 @@ def criar_consulta(
                 )
                 VALUES (%s, %s, %s, %s, %s, 'agendada')
                 RETURNING id
-            """, (
+            """,
+            (
                 paciente_id,
                 dentista_id,
                 procedimento_id,
                 data_hora_inicio,
-                data_hora_fim
-            ))
+                data_hora_fim,
+            ),
+        )
 
-            consulta = cursor.fetchone()
+        consulta = cursor.fetchone()
 
-            return consulta
+        return consulta
+
 
 def listar_consultas():
-    with conectar() as conexao:
-        with conexao.cursor() as cursor:
-            cursor.execute("""
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute("""
                 SELECT
                     c.id,
 
@@ -107,29 +112,29 @@ def listar_consultas():
                 ORDER BY c.data_hora_inicio
             """)
 
-            return cursor.fetchall()
+        return cursor.fetchall()
+
 
 def cancelar_consulta(consulta_id: int):
-    with conectar() as conexao:
-        with conexao.cursor() as cursor:
-            cursor.execute("""
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute(
+            """
                 UPDATE consultas
                 SET status = 'cancelada'
                 WHERE id = %s
                   AND status = 'agendada'
                 RETURNING id
-            """, (consulta_id,))
+            """,
+            (consulta_id,),
+        )
 
-            return cursor.fetchone()
+        return cursor.fetchone()
 
-def remarcar_consulta(
-    consulta_id: int,
-    data_hora_inicio,
-    data_hora_fim
-):
-    with conectar() as conexao:
-        with conexao.cursor() as cursor:
-            cursor.execute("""
+
+def remarcar_consulta(consulta_id: int, data_hora_inicio, data_hora_fim):
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute(
+            """
                 UPDATE consultas
                 SET
                     data_hora_inicio = %s,
@@ -137,18 +142,17 @@ def remarcar_consulta(
                 WHERE id = %s
                   AND status = 'agendada'
                 RETURNING id
-            """, (
-                data_hora_inicio,
-                data_hora_fim,
-                consulta_id
-            ))
+            """,
+            (data_hora_inicio, data_hora_fim, consulta_id),
+        )
 
-            return cursor.fetchone()
+        return cursor.fetchone()
+
 
 def buscar_consulta_por_id(consulta_id: int):
-    with conectar() as conexao:
-        with conexao.cursor() as cursor:
-            cursor.execute("""
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute(
+            """
                 SELECT
                     id,
                     paciente_id,
@@ -159,6 +163,8 @@ def buscar_consulta_por_id(consulta_id: int):
                     status
                 FROM consultas
                 WHERE id = %s
-            """, (consulta_id,))
+            """,
+            (consulta_id,),
+        )
 
-            return cursor.fetchone()
+        return cursor.fetchone()

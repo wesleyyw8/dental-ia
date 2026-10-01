@@ -1,8 +1,8 @@
 import os
 
 import psycopg
-from psycopg.rows import dict_row
 from dotenv import load_dotenv
+from psycopg.rows import dict_row
 
 load_dotenv()
 
@@ -14,5 +14,5 @@ def conectar():
         dbname=os.getenv("DB_NAME"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
-        row_factory=dict_row
+        row_factory=dict_row,
     )

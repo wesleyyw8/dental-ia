@@ -1,5 +1,6 @@
 import re
 
+
 def normalizar_telefone(telefone: str) -> str:
     numeros = re.sub(r"\D", "", telefone)
 

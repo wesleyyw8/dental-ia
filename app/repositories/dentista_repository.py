@@ -2,9 +2,8 @@ from app.database import conectar
 
 
 def listar_dentistas():
-    with conectar() as conexao:
-        with conexao.cursor() as cursor:
-            cursor.execute("""
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute("""
                 SELECT
                     id,
                     nome,
@@ -17,12 +16,13 @@ def listar_dentistas():
                 ORDER BY nome
             """)
 
-            return cursor.fetchall()
+        return cursor.fetchall()
+
 
 def listar_dentistas_por_procedimento(procedimento_id: int):
-    with conectar() as conexao:
-        with conexao.cursor() as cursor:
-            cursor.execute("""
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute(
+            """
                 SELECT
                     d.id,
                     d.nome,
@@ -35,21 +35,23 @@ def listar_dentistas_por_procedimento(procedimento_id: int):
                 WHERE dp.procedimento_id = %s
                   AND d.ativo = TRUE
                 ORDER BY d.nome
-            """, (procedimento_id,))
+            """,
+            (procedimento_id,),
+        )
 
-            return cursor.fetchall()
+        return cursor.fetchall()
 
-def dentista_realiza_procedimento(
-    dentista_id: int,
-    procedimento_id: int
-):
-    with conectar() as conexao:
-        with conexao.cursor() as cursor:
-            cursor.execute("""
+
+def dentista_realiza_procedimento(dentista_id: int, procedimento_id: int):
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute(
+            """
                 SELECT 1
                 FROM dentista_procedimentos
                 WHERE dentista_id = %s
                   AND procedimento_id = %s
-            """, (dentista_id, procedimento_id))
+            """,
+            (dentista_id, procedimento_id),
+        )
 
-            return cursor.fetchone() is not None
+        return cursor.fetchone() is not None

@@ -2,9 +2,9 @@ from app.database import conectar
 
 
 def listar_disponibilidades(dentista_id: int, data: str):
-    with conectar() as conexao:
-        with conexao.cursor() as cursor:
-            cursor.execute("""
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute(
+            """
                 SELECT
                     id,
                     dentista_id,
@@ -15,6 +15,8 @@ def listar_disponibilidades(dentista_id: int, data: str):
                 WHERE dentista_id = %s
                   AND data = %s
                 ORDER BY hora_inicio
-            """, (dentista_id, data))
+            """,
+            (dentista_id, data),
+        )
 
-            return cursor.fetchall()
+        return cursor.fetchall()

@@ -2,11 +2,7 @@ from fastapi import APIRouter
 
 from app.services.disponibilidade_service import buscar_disponibilidades
 
-
-router = APIRouter(
-    prefix="/disponibilidades",
-    tags=["Disponibilidades"]
-)
+router = APIRouter(prefix="/disponibilidades", tags=["Disponibilidades"])
 
 
 @router.get("")

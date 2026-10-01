@@ -2,11 +2,7 @@ from fastapi import APIRouter
 
 from app.services.horario_service import buscar_horarios
 
-
-router = APIRouter(
-    prefix="/horarios",
-    tags=["Horários"]
-)
+router = APIRouter(prefix="/horarios", tags=["Horários"])
 
 
 @router.get("")

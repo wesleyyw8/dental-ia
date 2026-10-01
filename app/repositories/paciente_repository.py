@@ -1,10 +1,10 @@
 from app.database import conectar
 from app.utils.telefone import normalizar_telefone
 
+
 def listar_pacientes():
-    with conectar() as conexao:
-        with conexao.cursor() as cursor:
-            cursor.execute("""
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute("""
                 SELECT
                     id,
                     nome,
@@ -14,13 +14,14 @@ def listar_pacientes():
                 ORDER BY nome
             """)
 
-            return cursor.fetchall()
+        return cursor.fetchall()
+
 
 def buscar_paciente_por_telefone(telefone: str):
     telefone = normalizar_telefone(telefone)
-    with conectar() as conexao:
-        with conexao.cursor() as cursor:
-            cursor.execute("""
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute(
+            """
                 SELECT
                     id,
                     nome,
@@ -28,15 +29,18 @@ def buscar_paciente_por_telefone(telefone: str):
                     email
                 FROM pacientes
                 WHERE telefone = %s
-            """, (telefone,))
+            """,
+            (telefone,),
+        )
 
-            return cursor.fetchone()
+        return cursor.fetchone()
+
 
 def criar_paciente(nome: str, telefone: str, email: str):
     telefone = normalizar_telefone(telefone)
-    with conectar() as conexao:
-        with conexao.cursor() as cursor:
-            cursor.execute("""
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute(
+            """
                 INSERT INTO pacientes (
                     nome,
                     telefone,
@@ -44,6 +48,8 @@ def criar_paciente(nome: str, telefone: str, email: str):
                 )
                 VALUES (%s, %s, %s)
                 RETURNING id, nome, telefone, email
-            """, (nome, telefone, email))
+            """,
+            (nome, telefone, email),
+        )
 
-            return cursor.fetchone()
+        return cursor.fetchone()
