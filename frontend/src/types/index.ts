@@ -20,6 +20,19 @@ export interface Procedimento {
   ativo?: boolean
 }
 
+export interface ProcedimentoInput {
+  nome: string
+  descricao: string
+  duracao_minutos: number
+  preco: number
+}
+
+export interface ProcedimentoMutationResponse {
+  mensagem?: string
+  procedimento_id?: number
+  erro?: string
+}
+
 export interface Dentista {
   id: number
   nome: string

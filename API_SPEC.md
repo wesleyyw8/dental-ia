@@ -130,6 +130,93 @@ Lista os procedimentos ativos.
 
 ---
 
+---
+
+## POST /procedimentos
+
+Cadastra um novo procedimento.
+
+### Request
+
+{
+  "nome": "Restauração",
+  "descricao": "Restauração de dente",
+  "duracao_minutos": 60,
+  "preco": 300
+}
+
+### Successful response
+
+{
+  "id": 7,
+  "nome": "Restauração",
+  "descricao": "Restauração de dente",
+  "duracao_minutos": 60,
+  "preco": 300.0,
+  "ativo": true
+}
+
+---
+
+## PUT /procedimentos/{procedimento_id}
+
+Atualiza um procedimento ativo.
+
+### Example
+
+PUT /procedimentos/7
+
+### Request
+
+{
+  "nome": "Restauração",
+  "descricao": "Restauração dentária",
+  "duracao_minutos": 90,
+  "preco": 350
+}
+
+### Successful response
+
+{
+  "id": 7,
+  "nome": "Restauração",
+  "descricao": "Restauração dentária",
+  "duracao_minutos": 90,
+  "preco": 350.0,
+  "ativo": true
+}
+
+### Not found or inactive
+
+{
+  "erro": "Procedimento não encontrado ou está inativo"
+}
+
+---
+
+## PATCH /procedimentos/{procedimento_id}/desativar
+
+Desativa um procedimento.
+
+O procedimento não é removido do banco de dados. Apenas o campo `ativo` é alterado para `false`.
+
+### Example
+
+PATCH /procedimentos/7/desativar
+
+### Successful response
+
+{
+  "mensagem": "Procedimento desativado com sucesso",
+  "procedimento_id": 7
+}
+
+### Not found or already inactive
+
+{
+  "erro": "Procedimento não encontrado ou já está inativo"
+}
+
 ## GET /dentistas
 
 Lista todos os dentistas.

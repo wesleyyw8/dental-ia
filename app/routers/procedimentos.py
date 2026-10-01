@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
+from app.services.procedimento_service import desativar_procedimento_por_id
 
 from app.services.procedimento_service import (
     buscar_procedimentos,
@@ -38,3 +39,7 @@ def editar(procedimento_id: int, request: ProcedimentoRequest):
         request.duracao_minutos,
         request.preco,
     )
+
+@router.patch("/{procedimento_id}/desativar")
+def desativar(procedimento_id: int):
+  return desativar_procedimento_por_id(procedimento_id)
