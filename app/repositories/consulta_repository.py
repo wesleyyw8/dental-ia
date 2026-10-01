@@ -144,3 +144,21 @@ def remarcar_consulta(
             ))
 
             return cursor.fetchone()
+
+def buscar_consulta_por_id(consulta_id: int):
+    with conectar() as conexao:
+        with conexao.cursor() as cursor:
+            cursor.execute("""
+                SELECT
+                    id,
+                    paciente_id,
+                    dentista_id,
+                    procedimento_id,
+                    data_hora_inicio,
+                    data_hora_fim,
+                    status
+                FROM consultas
+                WHERE id = %s
+            """, (consulta_id,))
+
+            return cursor.fetchone()

@@ -6,7 +6,11 @@ from app.repositories.consulta_repository import (
     criar_consulta,
     listar_consultas
 )
-from app.repositories.consulta_repository import cancelar_consulta
+from app.repositories.consulta_repository import (
+  cancelar_consulta, 
+  buscar_consulta_por_id
+)
+from app.repositories.consulta_repository import remarcar_consulta
 
 def agendar_consulta(
     paciente_id: int,
@@ -65,3 +69,57 @@ def cancelar_consulta_por_id(consulta_id: int):
         "mensagem": "Consulta cancelada com sucesso",
         "consulta_id": consulta["id"]
     }
+
+def remarcar_consulta_por_id(
+    consulta_id: int,
+    data: str,
+    horario: str
+):
+  consulta = buscar_consulta_por_id(consulta_id)
+
+  if not consulta:
+      return {
+          "erro": "Consulta não encontrada"
+      }
+
+  if consulta["status"] != "agendada":
+    return {
+        "erro": "Esta consulta não pode ser remarcada"
+    }
+
+  horarios = buscar_horarios(
+    consulta["dentista_id"],
+    consulta["procedimento_id"],
+    data
+  )
+
+  if "erro" in horarios:
+    return {
+      "erro": horarios["erro"]
+    }
+
+  if horario not in horarios["horarios_disponiveis"]:
+    return {
+      "erro": "Horário não disponível"
+    }
+
+  data_hora_inicio = datetime.strptime(
+    f"{data} {horario}",
+    "%Y-%m-%d %H:%M"
+  )
+
+  procedimento = buscar_procedimento_por_id(
+    consulta["procedimento_id"]
+  )
+
+  data_hora_fim = data_hora_inicio + timedelta(
+    minutes=procedimento["duracao_minutos"]
+  )
+
+  consulta_atualizada = remarcar_consulta(
+    consulta_id,
+    data_hora_inicio,
+    data_hora_fim
+  )
+
+  return consulta_atualizada
