@@ -10,7 +10,6 @@ from app.services.procedimento_service import (
 
 router = APIRouter(prefix="/procedimentos", tags=["Procedimentos"])
 
-
 @router.get("")
 def listar():
     return buscar_procedimentos()
@@ -28,7 +27,6 @@ def criar(request: ProcedimentoRequest):
     return cadastrar_procedimento(
         request.nome, request.descricao, request.duracao_minutos, request.preco
     )
-
 
 @router.put("/{procedimento_id}")
 def editar(procedimento_id: int, request: ProcedimentoRequest):
