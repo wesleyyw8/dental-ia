@@ -5,6 +5,9 @@ import {
   DESATIVAR_PROCEDIMENTO_REQUEST,
   DESATIVAR_PROCEDIMENTO_SUCCESS,
   EDITAR_PROCEDIMENTO_SUCCESS,
+  PROFISSIONAIS_PROCEDIMENTOS_FAILURE,
+  PROFISSIONAIS_PROCEDIMENTOS_REQUEST,
+  PROFISSIONAIS_PROCEDIMENTOS_SUCCESS,
   PROCEDIMENTO_MUTATION_RESET,
   PROCEDIMENTOS_FAILURE,
   PROCEDIMENTOS_REQUEST,
@@ -15,6 +18,7 @@ import {
 
 const initialState: ProcedimentosState = {
   items: [], loading: false, error: null, saving: false,
+  profissionaisPorProcedimento: {}, profissionaisLoading: false, profissionaisError: null,
   deactivatingId: null, mutationError: null, mutationSuccess: null,
 }
 
@@ -23,6 +27,15 @@ export function procedimentosReducer(state = initialState, action: Procedimentos
     case PROCEDIMENTOS_REQUEST: return { ...state, loading: true, error: null }
     case PROCEDIMENTOS_SUCCESS: return { ...state, loading: false, items: action.payload }
     case PROCEDIMENTOS_FAILURE: return { ...state, loading: false, error: action.payload }
+    case PROFISSIONAIS_PROCEDIMENTOS_REQUEST: return {
+      ...state, profissionaisLoading: true, profissionaisError: null,
+    }
+    case PROFISSIONAIS_PROCEDIMENTOS_SUCCESS: return {
+      ...state, profissionaisLoading: false, profissionaisPorProcedimento: action.payload,
+    }
+    case PROFISSIONAIS_PROCEDIMENTOS_FAILURE: return {
+      ...state, profissionaisLoading: false, profissionaisError: action.payload,
+    }
     case SALVAR_PROCEDIMENTO_REQUEST: return { ...state, saving: true, mutationError: null, mutationSuccess: null }
     case CRIAR_PROCEDIMENTO_SUCCESS: return {
       ...state, saving: false, items: [...state.items, action.payload], mutationSuccess: 'Procedimento cadastrado com sucesso.',

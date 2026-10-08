@@ -153,6 +153,10 @@ h1, h2, h3, .brand { font-family: 'Manrope', sans-serif; }
 .procedure-card__body { padding: 20px; }
 .procedure-card h2 { margin: 14px 0 7px; font-size: 18px; }
 .procedure-card p { min-height: 40px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.procedure-card__professionals { min-height: 78px; margin-top: 16px; padding-top: 14px; border-top: 1px solid #edf1ef; color: var(--muted); font-size: 12px; }
+.procedure-card__professionals > strong { display: flex; align-items: center; gap: 6px; margin-bottom: 7px; color: var(--text); font-size: 12px; }
+.procedure-card__professionals ul { display: grid; gap: 4px; margin: 0; padding-left: 18px; }
+.procedure-card__professionals li::marker { color: var(--green); }
 .procedure-card__footer { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 20px; padding-top: 16px; border-top: 1px solid #edf1ef; }
 .procedure-card__footer span { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
 .procedure-card__footer strong { color: var(--green); font-family: 'Manrope'; font-size: 17px; }

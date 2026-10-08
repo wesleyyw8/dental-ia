@@ -3,6 +3,9 @@ import type { RootState } from '../store'
 export const selectProcedimentos = (state: RootState) => state.procedimentos.items
 export const selectProcedimentosLoading = (state: RootState) => state.procedimentos.loading
 export const selectProcedimentosError = (state: RootState) => state.procedimentos.error
+export const selectProfissionaisPorProcedimento = (state: RootState) => state.procedimentos.profissionaisPorProcedimento
+export const selectProfissionaisProcedimentosLoading = (state: RootState) => state.procedimentos.profissionaisLoading
+export const selectProfissionaisProcedimentosError = (state: RootState) => state.procedimentos.profissionaisError
 export const selectProcedimentoSaving = (state: RootState) => state.procedimentos.saving
 export const selectProcedimentoDeactivatingId = (state: RootState) => state.procedimentos.deactivatingId
 export const selectProcedimentoMutationError = (state: RootState) => state.procedimentos.mutationError

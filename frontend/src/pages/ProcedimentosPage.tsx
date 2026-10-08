@@ -1,4 +1,4 @@
-import { Clock3, Pencil, Plus, Sparkles, XCircle } from 'lucide-react'
+import { Clock3, Pencil, Plus, Sparkles, UsersRound, XCircle } from 'lucide-react'
 import { type FormEvent, useEffect, useState } from 'react'
 import { Modal } from '../components/Modal'
 import { PageHeader } from '../components/PageHeader'
@@ -9,6 +9,7 @@ import {
   criarProcedimento,
   desativarProcedimento,
   editarProcedimento,
+  fetchProfissionaisPorProcedimento,
   fetchProcedimentos,
   resetProcedimentoMutation,
 } from '../redux/actions/procedimentosActions'
@@ -17,6 +18,9 @@ import {
   selectProcedimentoDeactivatingId,
   selectProcedimentoMutationError,
   selectProcedimentoMutationSuccess,
+  selectProfissionaisPorProcedimento,
+  selectProfissionaisProcedimentosError,
+  selectProfissionaisProcedimentosLoading,
   selectProcedimentos,
   selectProcedimentosError,
   selectProcedimentosLoading,
@@ -31,6 +35,9 @@ export function ProcedimentosPage() {
   const items = useAppSelector(selectProcedimentos)
   const loading = useAppSelector(selectProcedimentosLoading)
   const error = useAppSelector(selectProcedimentosError)
+  const profissionaisPorProcedimento = useAppSelector(selectProfissionaisPorProcedimento)
+  const profissionaisLoading = useAppSelector(selectProfissionaisProcedimentosLoading)
+  const profissionaisError = useAppSelector(selectProfissionaisProcedimentosError)
   const saving = useAppSelector(selectProcedimentoSaving)
   const deactivatingId = useAppSelector(selectProcedimentoDeactivatingId)
   const mutationError = useAppSelector(selectProcedimentoMutationError)
@@ -45,6 +52,12 @@ export function ProcedimentosPage() {
     dispatch(fetchProcedimentos())
     return () => { dispatch(resetProcedimentoMutation()) }
   }, [dispatch])
+
+  useEffect(() => {
+    if (items.length > 0) {
+      dispatch(fetchProfissionaisPorProcedimento(items.map((item) => item.id)))
+    }
+  }, [dispatch, items])
 
   const duration = Number(form.duracao)
   const price = Number(form.preco.replace(',', '.'))
@@ -117,14 +130,24 @@ export function ProcedimentosPage() {
 
     {loading ? <StateView type="loading" /> : error ? <StateView type="error" message={error} onRetry={() => dispatch(fetchProcedimentos())} /> : items.length === 0 ?
       <StateView type="empty" message="Nenhum procedimento ativo foi retornado pela API." /> :
-      <div className="procedure-grid">{items.map((item, index) => <article className="procedure-card" key={item.id}>
+      <div className="procedure-grid">{items.map((item, index) => {
+        const profissionais = profissionaisPorProcedimento[item.id]
+
+        return <article className="procedure-card" key={item.id}>
         <div className={`procedure-card__visual procedure-card__visual--${index % 4}`}><Sparkles size={25} /><span>{String(index + 1).padStart(2, '0')}</span></div>
         <div className="procedure-card__body">
           <span className="status status--active">Disponível</span><h2>{item.nome}</h2><p>{item.descricao}</p>
+          <div className="procedure-card__professionals">
+            <strong><UsersRound size={15} /> Profissionais:</strong>
+            {profissionais ? profissionais.length > 0 ?
+              <ul>{profissionais.map((profissional) => <li key={profissional.id}>{profissional.nome}</li>)}</ul> :
+              <span>Nenhum profissional cadastrado</span> :
+              <span>{profissionaisLoading ? 'Carregando profissionais…' : profissionaisError ? 'Não foi possível carregar os profissionais' : 'Nenhum profissional cadastrado'}</span>}
+          </div>
           <div className="procedure-card__footer"><span><Clock3 size={16} />{item.duracao_minutos} min</span><strong>{formatCurrency(item.preco)}</strong></div>
           <div className="procedure-card__actions"><button className="table-action" onClick={() => openEdit(item)}><Pencil size={15} /> Editar</button><button className="table-action table-action--danger" onClick={() => openDeactivate(item)}><XCircle size={15} /> Desativar</button></div>
         </div>
-      </article>)}</div>}
+      </article>})}</div>}
 
     <Modal open={formOpen} title={editing ? 'Editar procedimento' : 'Novo procedimento'} onClose={closeForm} actions={<>
       <button className="button button--secondary" onClick={closeForm} disabled={saving}>Cancelar</button>

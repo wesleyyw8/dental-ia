@@ -10,6 +10,8 @@ from app.routers.horarios import router as horarios_router
 from app.routers.pacientes import router as pacientes_router
 from app.routers.procedimentos import router as procedimentos_router
 from app.services.whatsapp_ura_service import processar_mensagem
+from app.services.ia_service import conversar
+from app.whatsapp import enviar_mensagem
 
 app = FastAPI(title="Dental AI API", version="0.1.0")
 
@@ -19,7 +21,6 @@ app.include_router(horarios_router)
 app.include_router(consultas_router)
 app.include_router(pacientes_router)
 app.include_router(procedimentos_router)
-
 
 @app.get("/webhook/whatsapp")
 async def verificar_webhook(request: Request):
@@ -58,5 +59,6 @@ async def receber_mensagem(request: Request):
     if not numero or not texto:
         return {"status": "ok"}
 
-    processar_mensagem(numero, texto)
+    resposta = conversar(numero, texto)
+    enviar_mensagem(numero, resposta)
     return {"status": "ok"}

@@ -39,6 +39,11 @@ def tem_conflito(slot_inicio, duracao_minutos: int, consultas):
 
 
 def buscar_horarios(dentista_id: int, procedimento_id: int, data: str):
+    data_obj = datetime.strptime(data, "%Y-%m-%d")
+
+    if data_obj.isoweekday() in (6, 7):
+        return {"erro": "A clínica não realiza atendimentos aos finais de semana"}
+
     realiza_procedimento = dentista_realiza_procedimento(dentista_id, procedimento_id)
     if not realiza_procedimento:
         return {"erro": "Este dentista não realiza esse procedimento"}
@@ -46,7 +51,6 @@ def buscar_horarios(dentista_id: int, procedimento_id: int, data: str):
     procedimento = buscar_procedimento_por_id(procedimento_id)
     disponibilidades = listar_disponibilidades(dentista_id, data)
 
-    data_obj = datetime.strptime(data, "%Y-%m-%d")
     dia_semana = data_obj.isoweekday()
     horarios_trabalho = buscar_horarios_trabalho(dentista_id, dia_semana)
 

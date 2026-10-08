@@ -1,4 +1,4 @@
-import type { Procedimento, ProcedimentoInput, ProcedimentoMutationResponse } from '../../types'
+import type { Dentista, Procedimento, ProcedimentoInput, ProcedimentoMutationResponse } from '../../types'
 import { api, getApiError } from '../../services/api'
 import type { AppThunk } from '../store'
 import {
@@ -7,6 +7,9 @@ import {
   DESATIVAR_PROCEDIMENTO_REQUEST,
   DESATIVAR_PROCEDIMENTO_SUCCESS,
   EDITAR_PROCEDIMENTO_SUCCESS,
+  PROFISSIONAIS_PROCEDIMENTOS_FAILURE,
+  PROFISSIONAIS_PROCEDIMENTOS_REQUEST,
+  PROFISSIONAIS_PROCEDIMENTOS_SUCCESS,
   PROCEDIMENTO_MUTATION_RESET,
   PROCEDIMENTOS_FAILURE,
   PROCEDIMENTOS_REQUEST,
@@ -22,6 +25,24 @@ export const fetchProcedimentos = (): AppThunk => async (dispatch) => {
     dispatch({ type: PROCEDIMENTOS_SUCCESS, payload: data })
   } catch (error) {
     dispatch({ type: PROCEDIMENTOS_FAILURE, payload: getApiError(error) })
+  }
+}
+
+export const fetchProfissionaisPorProcedimento = (procedimentoIds: number[]): AppThunk => async (dispatch) => {
+  dispatch({ type: PROFISSIONAIS_PROCEDIMENTOS_REQUEST })
+  try {
+    const profissionais = await Promise.all(procedimentoIds.map(async (procedimentoId) => {
+      const { data } = await api.get<Dentista[]>('/dentistas', {
+        params: { procedimento_id: procedimentoId },
+      })
+      return [procedimentoId, data] as const
+    }))
+    dispatch({
+      type: PROFISSIONAIS_PROCEDIMENTOS_SUCCESS,
+      payload: Object.fromEntries(profissionais),
+    })
+  } catch (error) {
+    dispatch({ type: PROFISSIONAIS_PROCEDIMENTOS_FAILURE, payload: getApiError(error) })
   }
 }
 

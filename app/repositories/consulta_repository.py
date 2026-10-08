@@ -168,3 +168,31 @@ def buscar_consulta_por_id(consulta_id: int):
         )
 
         return cursor.fetchone()
+
+def listar_consultas_por_paciente(paciente_id: int):
+    with conectar() as conexao, conexao.cursor() as cursor:
+        cursor.execute(
+            """
+                SELECT
+                    c.id,
+                    c.paciente_id,
+                    c.dentista_id,
+                    d.nome AS dentista_nome,
+                    c.procedimento_id,
+                    pr.nome AS procedimento_nome,
+                    c.data_hora_inicio,
+                    c.data_hora_fim,
+                    c.status
+                FROM consultas c
+                INNER JOIN dentistas d
+                    ON d.id = c.dentista_id
+                INNER JOIN procedimentos pr
+                    ON pr.id = c.procedimento_id
+                WHERE c.paciente_id = %s
+                  AND c.status = 'agendada'
+                ORDER BY c.data_hora_inicio
+            """,
+            (paciente_id,),
+        )
+
+        return cursor.fetchall()
