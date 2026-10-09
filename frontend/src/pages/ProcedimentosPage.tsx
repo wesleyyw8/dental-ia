@@ -136,13 +136,13 @@ export function ProcedimentosPage() {
         return <article className="procedure-card" key={item.id}>
         <div className={`procedure-card__visual procedure-card__visual--${index % 4}`}><Sparkles size={25} /><span>{String(index + 1).padStart(2, '0')}</span></div>
         <div className="procedure-card__body">
-          <span className="status status--active">Disponível</span><h2>{item.nome}</h2><p>{item.descricao}</p>
+          <span className={`status ${item.disponivel ? 'status--active' : 'status--inactive'}`}>{item.disponivel ? 'Disponível' : 'Indisponível'}</span><h2>{item.nome}</h2><p>{item.descricao}</p>
           <div className="procedure-card__professionals">
             <strong><UsersRound size={15} /> Profissionais:</strong>
             {profissionais ? profissionais.length > 0 ?
               <ul>{profissionais.map((profissional) => <li key={profissional.id}>{profissional.nome}</li>)}</ul> :
-              <span>Nenhum profissional cadastrado</span> :
-              <span>{profissionaisLoading ? 'Carregando profissionais…' : profissionaisError ? 'Não foi possível carregar os profissionais' : 'Nenhum profissional cadastrado'}</span>}
+              <span>Sem profissional</span> :
+              <span>{profissionaisLoading ? 'Carregando profissionais…' : profissionaisError ? 'Não foi possível carregar os profissionais' : 'Sem profissional'}</span>}
           </div>
           <div className="procedure-card__footer"><span><Clock3 size={16} />{item.duracao_minutos} min</span><strong>{formatCurrency(item.preco)}</strong></div>
           <div className="procedure-card__actions"><button className="table-action" onClick={() => openEdit(item)}><Pencil size={15} /> Editar</button><button className="table-action table-action--danger" onClick={() => openDeactivate(item)}><XCircle size={15} /> Desativar</button></div>

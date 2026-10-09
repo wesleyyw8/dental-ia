@@ -1,13 +1,21 @@
 from app.repositories.procedimento_repository import (
     atualizar_procedimento,
     criar_procedimento,
+    desativar_procedimento,
     listar_procedimentos,
-    desativar_procedimento
 )
 
 
 def buscar_procedimentos():
     return listar_procedimentos()
+
+
+def buscar_procedimentos_disponiveis():
+    return [
+        procedimento
+        for procedimento in listar_procedimentos()
+        if procedimento["disponivel"]
+    ]
 
 
 def cadastrar_procedimento(
@@ -28,15 +36,14 @@ def editar_procedimento(
 
     return procedimento
 
+
 def desativar_procedimento_por_id(procedimento_id: int):
     procedimento = desativar_procedimento(procedimento_id)
 
     if not procedimento:
-        return {
-            "erro": "Procedimento não encontrado ou já está inativo"
-        }
+        return {"erro": "Procedimento não encontrado ou já está inativo"}
 
     return {
         "mensagem": "Procedimento desativado com sucesso",
-        "procedimento_id": procedimento["id"]
+        "procedimento_id": procedimento["id"],
     }

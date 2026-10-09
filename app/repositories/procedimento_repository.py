@@ -25,15 +25,23 @@ def listar_procedimentos():
     with conectar() as conexao, conexao.cursor() as cursor:
         cursor.execute("""
                 SELECT
-                    id,
-                    nome,
-                    descricao,
-                    duracao_minutos,
-                    preco,
-                    ativo
-                FROM procedimentos
-                WHERE ativo = TRUE
-                ORDER BY nome
+                    p.id,
+                    p.nome,
+                    p.descricao,
+                    p.duracao_minutos,
+                    p.preco,
+                    p.ativo,
+                    EXISTS (
+                        SELECT 1
+                        FROM dentista_procedimentos dp
+                        INNER JOIN dentistas d
+                            ON d.id = dp.dentista_id
+                           AND d.ativo = TRUE
+                        WHERE dp.procedimento_id = p.id
+                    ) AS disponivel
+                FROM procedimentos p
+                WHERE p.ativo = TRUE
+                ORDER BY p.nome
             """)
 
         return cursor.fetchall()

@@ -4,6 +4,7 @@ import { AgendaPage } from './pages/AgendaPage'
 import { NovaConsultaPage } from './pages/NovaConsultaPage'
 import { PacientesPage } from './pages/PacientesPage'
 import { ProcedimentosPage } from './pages/ProcedimentosPage'
+import { ProfissionaisPage } from './pages/ProfissionaisPage'
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
           <Route path="/nova-consulta" element={<NovaConsultaPage />} />
           <Route path="/pacientes" element={<PacientesPage />} />
           <Route path="/procedimentos" element={<ProcedimentosPage />} />
+          <Route path="/profissionais" element={<ProfissionaisPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

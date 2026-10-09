@@ -18,6 +18,7 @@ export interface Procedimento {
   duracao_minutos: number
   preco: number
   ativo?: boolean
+  disponivel?: boolean
 }
 
 export interface ProcedimentoInput {
@@ -40,6 +41,26 @@ export interface Dentista {
   telefone: string
   email: string
   ativo?: boolean
+  procedimentos?: ProcedimentoResumo[]
+}
+
+export interface ProcedimentoResumo {
+  id: number
+  nome: string
+}
+
+export interface DentistaInput {
+  nome: string
+  especialidade: string
+  telefone: string
+  email: string
+  procedimento_ids: number[]
+}
+
+export interface DentistaMutationResponse {
+  mensagem?: string
+  dentista_id?: number
+  erro?: string
 }
 
 export interface Disponibilidade {

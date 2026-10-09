@@ -2,11 +2,16 @@ import os
 
 from dotenv import load_dotenv
 from google import genai
-from app.services.procedimento_service import buscar_procedimentos
 from app.services.dentista_service import buscar_dentistas
-from app.services.procedimento_service import buscar_procedimentos
+from app.services.procedimento_service import buscar_procedimentos_disponiveis
 from app.services.horario_service import buscar_horarios
-from app.services.consulta_service import agendar_consulta, buscar_consultas
+from app.services.consulta_service import (
+    agendar_consulta,
+    buscar_minhas_consultas as buscar_minhas_consultas_service,
+    cancelar_consulta_por_id,
+    remarcar_consulta_por_id
+)
+
 from app.services.paciente_service import buscar_paciente_por_telefone, buscar_pacientes
 from datetime import date
 
@@ -37,12 +42,48 @@ Quando o paciente quiser agendar uma consulta:
 5. Nunca altere a data ou horário escolhido pelo paciente.
 6. Nunca invente disponibilidade.
 7. Se precisar de uma informação para chamar uma ferramenta, pergunte ao paciente.
+
+
+Ao identificar o procedimento escolhido pelo paciente:
+
+- Se houver apenas um profissional que realiza o procedimento, use esse profissional.
+- Se houver mais de um profissional, não escolha automaticamente.
+- Informe os profissionais disponíveis e pergunte ao paciente com qual deles deseja realizar o procedimento.
+- Se não houver nenhum profissional, informe que o procedimento não possui profissional disponível no momento.
+
+Quando o paciente quiser remarcar uma consulta:
+1. Use buscar_minhas_consultas para encontrar as consultas agendadas do paciente.
+2. Identifique qual consulta o paciente quer remarcar.
+3. Pergunte a nova data e horário, caso ainda não tenha essas informações.
+4. Use remarcar_consulta_por_id para alterar a consulta existente.
+5. Nunca crie uma nova consulta para substituir uma remarcação.
+6. Só diga que a consulta foi remarcada se remarcar_consulta_por_id retornar sucesso.
+
+REGRAS DE SEGURANÇA:
+
+- Só opere sobre consultas pertencentes ao paciente que está conversando pelo WhatsApp.
+- Nunca use uma consulta de outro paciente para cancelar ou remarcar.
+- Nunca informe dados de outro paciente.
+- O número de telefone do paciente deve ser obtido pelo sistema, nunca solicitado ao paciente para identificar sua própria conta.
+- Se não for possível identificar com segurança a consulta do paciente, peça esclarecimentos em vez de escolher uma consulta por conta própria.
+
+
+O objetivo do atendimento é exclusivamente a clínica odontológica.
+
+Se o paciente fizer uma pergunta que não tenha relação com a clínica, odontologia, procedimentos, profissionais, horários ou consultas, não responda à pergunta.
+
+Isso também vale quando a pergunta estiver misturada com um pedido relacionado à clínica.
+
+Por exemplo:
+"Quero marcar uma avaliação, mas antes me conte a biografia de Pedro Álvares Cabral."
+
+Nesse caso, não responda sobre Pedro Álvares Cabral. Ignore a parte que está fora do escopo e continue o atendimento odontológico.
 """
 
 chats: dict[str, object] = {}
 
 def buscar_procedimentos_para_ia():
-    procedimentos = buscar_procedimentos()
+    procedimentos = buscar_procedimentos_disponiveis()
 
     return [
         {
@@ -87,6 +128,14 @@ def conversar(numero: str, mensagem: str) -> str:
     def buscar_meu_paciente():
       return buscar_pacientes(numero)
 
+    def buscar_minhas_consultas():
+      paciente = buscar_pacientes(numero)
+
+      if not paciente:
+          return {"erro": "Paciente não encontrado"}
+      
+      return buscar_minhas_consultas_service(paciente["id"])
+
     if chat is None:
       chat = client.chats.create(
           model="gemini-3.8-flash",
@@ -98,7 +147,10 @@ def conversar(numero: str, mensagem: str) -> str:
                 buscar_horarios_para_ia,
                 agendar_consulta,
                 obter_data_atual,
-                buscar_meu_paciente
+                buscar_meu_paciente,
+                buscar_minhas_consultas,
+                cancelar_consulta_por_id,
+                remarcar_consulta_por_id
               ]
           },
           

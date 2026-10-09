@@ -81,7 +81,8 @@ Cadastra um novo paciente.
 
 ## GET /procedimentos
 
-Lista os procedimentos ativos.
+Lista os procedimentos ativos. O campo `disponivel` indica se existe pelo menos um
+profissional ativo associado ao procedimento.
 
 ### Response
 
@@ -92,7 +93,8 @@ Lista os procedimentos ativos.
     "descricao": "Consulta inicial para avaliação odontológica",
     "duracao_minutos": 30,
     "preco": 150.0,
-    "ativo": true
+    "ativo": true,
+    "disponivel": true
   },
   {
     "id": 3,
@@ -100,7 +102,8 @@ Lista os procedimentos ativos.
     "descricao": "Clareamento dentário",
     "duracao_minutos": 60,
     "preco": 600.0,
-    "ativo": true
+    "ativo": true,
+    "disponivel": true
   },
   {
     "id": 5,
@@ -108,7 +111,8 @@ Lista os procedimentos ativos.
     "descricao": "Instalação de aparelho ortodôntico",
     "duracao_minutos": 90,
     "preco": 800.0,
-    "ativo": true
+    "ativo": true,
+    "disponivel": true
   },
   {
     "id": 2,
@@ -116,7 +120,8 @@ Lista os procedimentos ativos.
     "descricao": "Limpeza e profilaxia dentária",
     "duracao_minutos": 60,
     "preco": 250.0,
-    "ativo": true
+    "ativo": true,
+    "disponivel": true
   },
   {
     "id": 4,
@@ -124,7 +129,8 @@ Lista os procedimentos ativos.
     "descricao": "Manutenção do aparelho ortodôntico",
     "duracao_minutos": 30,
     "preco": 180.0,
-    "ativo": true
+    "ativo": true,
+    "disponivel": true
   }
 ]
 
@@ -230,7 +236,11 @@ Lista todos os dentistas.
     "especialidade": "Clínico Geral",
     "telefone": "11999990001",
     "email": "ana@dentalai.com",
-    "ativo": true
+    "ativo": true,
+    "procedimentos": [
+      { "id": 1, "nome": "Avaliação" },
+      { "id": 2, "nome": "Limpeza" }
+    ]
   },
   {
     "id": 2,
@@ -238,9 +248,65 @@ Lista todos os dentistas.
     "especialidade": "Ortodontia",
     "telefone": "11999990002",
     "email": "carlos@dentalai.com",
-    "ativo": true
+    "ativo": true,
+    "procedimentos": [
+      { "id": 1, "nome": "Avaliação" },
+      { "id": 4, "nome": "Manutenção ortodôntica" }
+    ]
   }
 ]
+
+---
+
+## POST /dentistas
+
+Cadastra um profissional ativo e seus vínculos em `dentista_procedimentos`.
+
+### Request
+
+{
+  "nome": "Dra. Maria Oliveira",
+  "especialidade": "Dentística",
+  "telefone": "(11) 99999-0000",
+  "email": "maria@dentalai.com",
+  "procedimento_ids": [1, 2, 6]
+}
+
+### Successful response
+
+{
+  "id": 3,
+  "nome": "Dra. Maria Oliveira",
+  "especialidade": "Dentística",
+  "telefone": "5511999990000",
+  "email": "maria@dentalai.com",
+  "ativo": true,
+  "procedimentos": [
+    { "id": 1, "nome": "Avaliação" },
+    { "id": 2, "nome": "Limpeza" },
+    { "id": 6, "nome": "Restauração" }
+  ]
+}
+
+---
+
+## PUT /dentistas/{dentista_id}
+
+Atualiza o profissional ativo e substitui seus vínculos em
+`dentista_procedimentos`. Usa o mesmo payload do cadastro.
+
+---
+
+## PATCH /dentistas/{dentista_id}/desativar
+
+Desativa o profissional sem remover seus dados ou vínculos.
+
+### Successful response
+
+{
+  "mensagem": "Profissional desativado com sucesso",
+  "dentista_id": 3
+}
 
 ---
 

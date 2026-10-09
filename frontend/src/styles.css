@@ -111,6 +111,7 @@ h1, h2, h3, .brand { font-family: 'Manrope', sans-serif; }
 .avatar--large { width: 48px; height: 48px; font-size: 13px; }
 .status { display: inline-flex; align-items: center; padding: 5px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; text-transform: capitalize; }
 .status--agendada, .status--active { color: #217264; background: #e2f2ed; }
+.status--inactive { color: #8a5a25; background: #f7ead8; }
 .status--upcoming { color: #217264; background: #e2f2ed; }
 .status--past { color: #687a76; background: #edf1ef; }
 .status--cancelada { color: #a34545; background: #fae7e5; }
@@ -161,6 +162,29 @@ h1, h2, h3, .brand { font-family: 'Manrope', sans-serif; }
 .procedure-card__footer span { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
 .procedure-card__footer strong { color: var(--green); font-family: 'Manrope'; font-size: 17px; }
 .procedure-card__actions { display: flex; justify-content: flex-end; gap: 5px; margin-top: 12px; }
+
+.professional-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.professional-card { padding: 21px; border: 1px solid var(--line); border-radius: 15px; background: white; box-shadow: 0 7px 28px rgba(30,69,62,.05); }
+.professional-card__header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; }
+.professional-card__header h2 { margin: 0 0 2px; font-size: 16px; }
+.professional-card__header div > span { color: var(--muted); font-size: 12px; }
+.avatar--professional { width: 44px; height: 44px; font-size: 12px; }
+.professional-card__contacts { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 17px; }
+.professional-card__contacts a { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+.professional-card__contacts a:hover { color: var(--green); }
+.professional-card__procedures { min-height: 83px; margin-top: 17px; padding-top: 14px; border-top: 1px solid #edf1ef; }
+.professional-card__procedures > strong { display: flex; align-items: center; gap: 6px; margin-bottom: 9px; font-size: 12px; }
+.professional-card__procedures > div { display: flex; flex-wrap: wrap; gap: 6px; }
+.professional-card__procedures > div span { padding: 5px 8px; border-radius: 7px; color: #286e62; background: #e9f4f0; font-size: 11px; font-weight: 600; }
+.professional-card__procedures small { color: var(--muted); }
+.professional-card__actions { display: flex; justify-content: flex-end; gap: 5px; margin-top: 12px; }
+.procedure-selector { margin: 0; padding: 0; border: 0; }
+.procedure-selector legend { margin-bottom: 7px; color: #536863; font-size: 12px; font-weight: 700; }
+.procedure-selector > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+.procedure-selector label { display: flex; align-items: center; gap: 8px; padding: 10px; border: 1px solid #dfe6e3; border-radius: 8px; color: var(--muted); cursor: pointer; font-size: 12px; }
+.procedure-selector label.selected { border-color: #75b5a7; color: var(--green-dark); background: #f0f8f5; }
+.procedure-selector input { accent-color: var(--green); }
+.procedure-selector > small { display: block; margin-top: 6px; color: #a34545; font-size: 11px; }
 
 .booking-layout { display: grid; grid-template-columns: minmax(0, 1fr) 330px; align-items: start; gap: 24px; }
 .booking-form { display: flex; flex-direction: column; gap: 13px; }
@@ -262,6 +286,7 @@ h1, h2, h3, .brand { font-family: 'Manrope', sans-serif; }
 
 @media (max-width: 1050px) {
   .procedure-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .professional-grid { grid-template-columns: 1fr; }
   .choice-grid--procedures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .booking-layout { grid-template-columns: minmax(0, 1fr) 280px; }
 }
@@ -295,6 +320,7 @@ h1, h2, h3, .brand { font-family: 'Manrope', sans-serif; }
   .segmented button { flex: 1; }
   .data-table th, .data-table td { padding: 13px 14px; }
   .procedure-grid { grid-template-columns: 1fr; }
+  .procedure-selector > div { grid-template-columns: 1fr; }
   .search-form { flex-direction: column; }
   .clear-input { top: 8px; right: 9px; }
   .choice-grid, .choice-grid--procedures { grid-template-columns: 1fr; }

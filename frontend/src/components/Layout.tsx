@@ -1,4 +1,4 @@
-import { CalendarDays, LayoutDashboard, Menu, Plus, Stethoscope, Users, X } from 'lucide-react'
+import { CalendarDays, LayoutDashboard, Menu, Plus, Stethoscope, UserRoundCog, Users, X } from 'lucide-react'
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 
@@ -7,6 +7,7 @@ const links = [
   { to: '/nova-consulta', label: 'Nova consulta', icon: Plus },
   { to: '/pacientes', label: 'Pacientes', icon: Users },
   { to: '/procedimentos', label: 'Procedimentos', icon: Stethoscope },
+  { to: '/profissionais', label: 'Profissionais', icon: UserRoundCog },
 ]
 
 export function Layout() {

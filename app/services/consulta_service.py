@@ -5,6 +5,7 @@ from app.repositories.consulta_repository import (
     cancelar_consulta,
     criar_consulta,
     listar_consultas,
+    listar_consultas_por_paciente,
     remarcar_consulta,
 )
 from app.repositories.procedimento_repository import buscar_procedimento_por_id
@@ -80,3 +81,6 @@ def remarcar_consulta_por_id(consulta_id: int, data: str, horario: str):
     )
 
     return consulta_atualizada
+
+def buscar_minhas_consultas(paciente_id: int):
+    return listar_consultas_por_paciente(paciente_id)

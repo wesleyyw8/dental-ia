@@ -15,12 +15,12 @@ import { selectConsultaCreateError, selectConsultaCreated, selectConsultaCreatin
 import { selectDentistas, selectDentistasError, selectDentistasLoading } from '../redux/selectors/dentistasSelectors'
 import { selectHorariosDisponiveis, selectHorariosError, selectHorariosLoading } from '../redux/selectors/horariosSelectors'
 import { selectPacientes, selectPacientesError, selectPacientesLoading } from '../redux/selectors/pacientesSelectors'
-import { selectProcedimentos, selectProcedimentosError, selectProcedimentosLoading } from '../redux/selectors/procedimentosSelectors'
+import { selectProcedimentosDisponiveis, selectProcedimentosError, selectProcedimentosLoading } from '../redux/selectors/procedimentosSelectors'
 import { formatCurrency, formatLongDate, initials, todayIso } from '../utils/formatters'
 
 export function NovaConsultaPage() {
   const dispatch = useAppDispatch()
-  const procedimentos = useAppSelector(selectProcedimentos)
+  const procedimentos = useAppSelector(selectProcedimentosDisponiveis)
   const procedimentosLoading = useAppSelector(selectProcedimentosLoading)
   const procedimentosError = useAppSelector(selectProcedimentosError)
   const dentistas = useAppSelector(selectDentistas)

@@ -5,7 +5,7 @@ from app.services.consulta_service import agendar_consulta
 from app.services.dentista_service import buscar_dentistas
 from app.services.horario_service import buscar_horarios
 from app.services.paciente_service import buscar_pacientes
-from app.services.procedimento_service import buscar_procedimentos
+from app.services.procedimento_service import buscar_procedimentos_disponiveis
 from app.whatsapp import enviar_mensagem
 
 ETAPA_MENU = "menu_principal"
@@ -80,7 +80,7 @@ def _iniciar_agendamento(numero: str) -> None:
         )
         return
 
-    procedimentos = buscar_procedimentos()
+    procedimentos = buscar_procedimentos_disponiveis()
 
     if not procedimentos:
         _voltar_ao_menu(

@@ -28,19 +28,19 @@ class WhatsAppUraServiceTest(unittest.TestCase):
     @patch("app.services.whatsapp_ura_service.agendar_consulta")
     @patch("app.services.whatsapp_ura_service.buscar_horarios")
     @patch("app.services.whatsapp_ura_service.buscar_dentistas")
-    @patch("app.services.whatsapp_ura_service.buscar_procedimentos")
+    @patch("app.services.whatsapp_ura_service.buscar_procedimentos_disponiveis")
     @patch("app.services.whatsapp_ura_service.buscar_pacientes")
     def test_fluxo_completo_converte_opcoes_para_ids_reais(
         self,
         buscar_pacientes,
-        buscar_procedimentos,
+        buscar_procedimentos_disponiveis,
         buscar_dentistas,
         buscar_horarios,
         agendar_consulta,
         enviar_mensagem,
     ):
         buscar_pacientes.return_value = {"id": 20, "nome": "Maria"}
-        buscar_procedimentos.return_value = [
+        buscar_procedimentos_disponiveis.return_value = [
             {"id": 1, "nome": "Avaliação"},
             {"id": 5, "nome": "Instalação de aparelho"},
         ]
@@ -77,18 +77,20 @@ class WhatsAppUraServiceTest(unittest.TestCase):
         )
 
     @patch("app.services.whatsapp_ura_service.buscar_dentistas")
-    @patch("app.services.whatsapp_ura_service.buscar_procedimentos")
+    @patch("app.services.whatsapp_ura_service.buscar_procedimentos_disponiveis")
     @patch("app.services.whatsapp_ura_service.buscar_pacientes")
     @patch("app.services.whatsapp_ura_service.enviar_mensagem")
     def test_opcao_de_procedimento_invalida_mantem_etapa(
         self,
         enviar_mensagem,
         buscar_pacientes,
-        buscar_procedimentos,
+        buscar_procedimentos_disponiveis,
         buscar_dentistas,
     ):
         buscar_pacientes.return_value = {"id": 20}
-        buscar_procedimentos.return_value = [{"id": 3, "nome": "Clareamento"}]
+        buscar_procedimentos_disponiveis.return_value = [
+            {"id": 3, "nome": "Clareamento"}
+        ]
 
         processar_mensagem(self.numero, "Oi")
         processar_mensagem(self.numero, "1")

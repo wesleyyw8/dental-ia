@@ -1,6 +1,7 @@
 import type { RootState } from '../store'
 
 export const selectProcedimentos = (state: RootState) => state.procedimentos.items
+export const selectProcedimentosDisponiveis = (state: RootState) => state.procedimentos.items.filter((item) => item.disponivel)
 export const selectProcedimentosLoading = (state: RootState) => state.procedimentos.loading
 export const selectProcedimentosError = (state: RootState) => state.procedimentos.error
 export const selectProfissionaisPorProcedimento = (state: RootState) => state.procedimentos.profissionaisPorProcedimento
