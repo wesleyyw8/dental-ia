@@ -46,14 +46,9 @@ def cancelar_consulta_por_id(consulta_id: int):
     if not consulta:
         return {"erro": "Consulta não encontrada ou já está cancelada"}
 
-    consulta = cancelar_consulta(consulta_id)
-
-    if not consulta:
-        return {"erro": "Consulta não encontrada ou já está cancelada"}
-
     return {
-      "mensagem": "Consulta cancelada com sucesso",
-      "consulta_id": consulta["id"],
+        "mensagem": "Consulta cancelada com sucesso",
+        "consulta_id": consulta["id"],
     }
 
 
