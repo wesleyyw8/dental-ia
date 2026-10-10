@@ -14,7 +14,7 @@ import {
   selectConsultaRescheduleError, selectConsultaReschedulingId,
   selectConsultas, selectConsultasError, selectConsultasLoading,
 } from '../redux/selectors/consultasSelectors'
-import { selectHorariosDisponiveis, selectHorariosError, selectHorariosLoading } from '../redux/selectors/horariosSelectors'
+import { selectHorariosDisponiveis, selectHorariosError, selectHorariosLoading, selectHorariosWeekendError } from '../redux/selectors/horariosSelectors'
 import { formatDate, formatLongDate, formatTime, initials, todayIso } from '../utils/formatters'
 
 type Filter = 'todas' | 'hoje' | 'proximas'
@@ -27,6 +27,7 @@ export function AgendaPage() {
   const horarios = useAppSelector(selectHorariosDisponiveis)
   const horariosLoading = useAppSelector(selectHorariosLoading)
   const horariosError = useAppSelector(selectHorariosError)
+  const horariosWeekendError = useAppSelector(selectHorariosWeekendError)
   const cancelingId = useAppSelector(selectConsultaCancelingId)
   const cancelError = useAppSelector(selectConsultaCancelError)
   const reschedulingId = useAppSelector(selectConsultaReschedulingId)
@@ -156,7 +157,7 @@ export function AgendaPage() {
         </div>
         <label className="form-field reschedule-date"><span>Nova data</span><input type="date" min={todayIso()} value={newDate} onChange={(event) => chooseRescheduleDate(event.target.value)} /></label>
         {newDate && <div className="time-area"><span className="field-label">Horários disponíveis em {formatLongDate(newDate)}</span>
-          {horariosLoading ? <StateView type="loading" compact /> : horariosError ? <StateView type="error" compact message={horariosError} onRetry={() => chooseRescheduleDate(newDate)} /> : horarios.length === 0 ? <StateView type="empty" compact title="Sem horários nesta data" message="Escolha outra data para continuar." /> :
+          {horariosLoading ? <StateView type="loading" compact /> : horariosError ? <StateView type="error" compact title={horariosWeekendError ? 'Clínica fechada no fim de semana' : undefined} message={horariosError} onRetry={horariosWeekendError ? undefined : () => chooseRescheduleDate(newDate)} /> : horarios.length === 0 ? <StateView type="empty" compact title="Sem horários nesta data" message="Escolha outra data para continuar." /> :
             <div className="time-grid">{horarios.map((horario) => <button key={horario} type="button" className={newTime === horario ? 'selected' : ''} onClick={() => setNewTime(horario)}><Clock3 size={15} />{horario}</button>)}</div>}
         </div>}
         {rescheduleError && <div className="inline-error">{rescheduleError}</div>}

@@ -46,7 +46,15 @@ def cancelar_consulta_por_id(consulta_id: int):
     if not consulta:
         return {"erro": "Consulta não encontrada ou já está cancelada"}
 
-    return {"mensagem": "Consulta cancelada com sucesso", "consulta_id": consulta["id"]}
+    consulta = cancelar_consulta(consulta_id)
+
+    if not consulta:
+        return {"erro": "Consulta não encontrada ou já está cancelada"}
+
+    return {
+      "mensagem": "Consulta cancelada com sucesso",
+      "consulta_id": consulta["id"],
+    }
 
 
 def remarcar_consulta_por_id(consulta_id: int, data: str, horario: str):
@@ -84,3 +92,9 @@ def remarcar_consulta_por_id(consulta_id: int, data: str, horario: str):
 
 def buscar_minhas_consultas(paciente_id: int):
     return listar_consultas_por_paciente(paciente_id)
+
+def pode_alterar_consulta(consulta):
+    agora = datetime.now()
+    tempo_restante = consulta["data_hora_inicio"] - agora
+
+    return tempo_restante >= timedelta(hours=24)

@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from google import genai
+from app.repositories.consulta_repository import buscar_consulta_por_id
 from app.services.dentista_service import buscar_dentistas
 from app.services.procedimento_service import buscar_procedimentos_disponiveis
 from app.services.horario_service import buscar_horarios
@@ -9,6 +10,7 @@ from app.services.consulta_service import (
     agendar_consulta,
     buscar_minhas_consultas as buscar_minhas_consultas_service,
     cancelar_consulta_por_id,
+    pode_alterar_consulta,
     remarcar_consulta_por_id
 )
 
@@ -55,9 +57,15 @@ Quando o paciente quiser remarcar uma consulta:
 1. Use buscar_minhas_consultas para encontrar as consultas agendadas do paciente.
 2. Identifique qual consulta o paciente quer remarcar.
 3. Pergunte a nova data e horário, caso ainda não tenha essas informações.
-4. Use remarcar_consulta_por_id para alterar a consulta existente.
+4. Use remarcar_consulta_whatsapp para alterar a consulta existente.
 5. Nunca crie uma nova consulta para substituir uma remarcação.
 6. Só diga que a consulta foi remarcada se remarcar_consulta_por_id retornar sucesso.
+
+Quando o paciente quiser cancelar uma consulta:
+1. Use buscar_minhas_consultas para encontrar as consultas agendadas do paciente.
+2. Identifique qual consulta o paciente quer cancelar.
+3. Use cancelar_consulta_whatsapp para cancelar a consulta.
+4. Só diga que a consulta foi cancelada se cancelar_consulta_whatsapp retornar sucesso.
 
 REGRAS DE SEGURANÇA:
 
@@ -136,6 +144,28 @@ def conversar(numero: str, mensagem: str) -> str:
       
       return buscar_minhas_consultas_service(paciente["id"])
 
+    def cancelar_consulta_whatsapp(consulta_id: int):
+      consulta = buscar_consulta_por_id(consulta_id)
+
+      if not consulta:
+          return {"erro": "Consulta não encontrada"}
+
+      if not pode_alterar_consulta(consulta):
+          return {"erro": "Não é possível cancelar consultas com menos de 24 horas de antecedência"}
+
+      return cancelar_consulta_por_id(consulta_id)
+
+    def remarcar_consulta_whatsapp(consulta_id: int, data: str, horario: str):
+      consulta = buscar_consulta_por_id(consulta_id)
+
+      if not consulta:
+          return {"erro": "Consulta não encontrada"}
+
+      if not pode_alterar_consulta(consulta):
+          return {"erro": "Não é possível remarcar consultas com menos de 24 horas de antecedência"}
+
+      return remarcar_consulta_por_id(consulta_id, data, horario)
+
     if chat is None:
       chat = client.chats.create(
           model="gemini-3.8-flash",
@@ -149,8 +179,8 @@ def conversar(numero: str, mensagem: str) -> str:
                 obter_data_atual,
                 buscar_meu_paciente,
                 buscar_minhas_consultas,
-                cancelar_consulta_por_id,
-                remarcar_consulta_por_id
+                cancelar_consulta_whatsapp,
+                remarcar_consulta_whatsapp
               ]
           },
           

@@ -13,7 +13,7 @@ import { fetchProcedimentos } from '../redux/actions/procedimentosActions'
 import { useAppDispatch, useAppSelector } from '../redux/hooks'
 import { selectConsultaCreateError, selectConsultaCreated, selectConsultaCreating } from '../redux/selectors/consultasSelectors'
 import { selectDentistas, selectDentistasError, selectDentistasLoading } from '../redux/selectors/dentistasSelectors'
-import { selectHorariosDisponiveis, selectHorariosError, selectHorariosLoading } from '../redux/selectors/horariosSelectors'
+import { selectHorariosDisponiveis, selectHorariosError, selectHorariosLoading, selectHorariosWeekendError } from '../redux/selectors/horariosSelectors'
 import { selectPacientes, selectPacientesError, selectPacientesLoading } from '../redux/selectors/pacientesSelectors'
 import { selectProcedimentosDisponiveis, selectProcedimentosError, selectProcedimentosLoading } from '../redux/selectors/procedimentosSelectors'
 import { formatCurrency, formatLongDate, initials, todayIso } from '../utils/formatters'
@@ -32,6 +32,7 @@ export function NovaConsultaPage() {
   const horarios = useAppSelector(selectHorariosDisponiveis)
   const horariosLoading = useAppSelector(selectHorariosLoading)
   const horariosError = useAppSelector(selectHorariosError)
+  const horariosWeekendError = useAppSelector(selectHorariosWeekendError)
   const creating = useAppSelector(selectConsultaCreating)
   const createError = useAppSelector(selectConsultaCreateError)
   const created = useAppSelector(selectConsultaCreated)
@@ -102,7 +103,7 @@ export function NovaConsultaPage() {
         <BookingSection number="03" icon={<CalendarDays />} title="Data e horário" active={Boolean(dentistaId)} locked={!dentistaId}>
           <label className="field"><span>Data da consulta</span><input type="date" min={todayIso()} value={date} onChange={(event) => chooseDate(event.target.value)} /></label>
           {date && <div className="time-area"><span className="field-label">Horários disponíveis</span>
-            {horariosLoading ? <StateView type="loading" compact /> : horariosError ? <StateView type="error" compact message={horariosError} onRetry={() => dentistaId && procedimentoId && dispatch(fetchHorarios(dentistaId, procedimentoId, date))} /> : horarios.length === 0 ? <StateView type="empty" compact title="Sem horários nesta data" message="Escolha outra data para continuar." /> :
+            {horariosLoading ? <StateView type="loading" compact /> : horariosError ? <StateView type="error" compact title={horariosWeekendError ? 'Clínica fechada no fim de semana' : undefined} message={horariosError} onRetry={horariosWeekendError ? undefined : () => dentistaId && procedimentoId && dispatch(fetchHorarios(dentistaId, procedimentoId, date))} /> : horarios.length === 0 ? <StateView type="empty" compact title="Sem horários nesta data" message="Escolha outra data para continuar." /> :
               <div className="time-grid">{horarios.map((item) => <button key={item} className={time === item ? 'selected' : ''} onClick={() => { setTime(item); setPacienteId(null) }}><Clock3 size={15} />{item}</button>)}</div>}
           </div>}
         </BookingSection>
