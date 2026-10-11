@@ -11,6 +11,13 @@ export const CRIAR_PACIENTE_REQUEST = 'pacientes/createRequest' as const
 export const CRIAR_PACIENTE_SUCCESS = 'pacientes/createSuccess' as const
 export const CRIAR_PACIENTE_FAILURE = 'pacientes/createFailure' as const
 export const CRIAR_PACIENTE_RESET = 'pacientes/createReset' as const
+export const EDITAR_PACIENTE_REQUEST = 'pacientes/updateRequest' as const
+export const EDITAR_PACIENTE_SUCCESS = 'pacientes/updateSuccess' as const
+export const EDITAR_PACIENTE_FAILURE = 'pacientes/updateFailure' as const
+export const EXCLUIR_PACIENTE_REQUEST = 'pacientes/deleteRequest' as const
+export const EXCLUIR_PACIENTE_SUCCESS = 'pacientes/deleteSuccess' as const
+export const EXCLUIR_PACIENTE_FAILURE = 'pacientes/deleteFailure' as const
+export const PACIENTE_MUTATION_RESET = 'pacientes/mutationReset' as const
 
 export interface PacientesState {
   items: Paciente[]
@@ -22,6 +29,10 @@ export interface PacientesState {
   creating: boolean
   createError: string | null
   created: Paciente | null
+  updatingId: number | null
+  deletingId: number | null
+  mutationError: string | null
+  mutationSuccess: string | null
 }
 
 export type PacientesAction =
@@ -36,3 +47,10 @@ export type PacientesAction =
   | { type: typeof CRIAR_PACIENTE_SUCCESS; payload: Paciente }
   | { type: typeof CRIAR_PACIENTE_FAILURE; payload: string }
   | { type: typeof CRIAR_PACIENTE_RESET }
+  | { type: typeof EDITAR_PACIENTE_REQUEST; payload: number }
+  | { type: typeof EDITAR_PACIENTE_SUCCESS; payload: Paciente }
+  | { type: typeof EDITAR_PACIENTE_FAILURE; payload: string }
+  | { type: typeof EXCLUIR_PACIENTE_REQUEST; payload: number }
+  | { type: typeof EXCLUIR_PACIENTE_SUCCESS; payload: { id: number; message: string } }
+  | { type: typeof EXCLUIR_PACIENTE_FAILURE; payload: string }
+  | { type: typeof PACIENTE_MUTATION_RESET }

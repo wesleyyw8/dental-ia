@@ -11,6 +11,13 @@ export interface NovoPaciente {
   email: string
 }
 
+export interface PacienteMutationResponse {
+  mensagem?: string
+  paciente_id?: number
+  consultas_excluidas?: number
+  erro?: string
+}
+
 export interface Procedimento {
   id: number
   nome: string

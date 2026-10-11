@@ -16,7 +16,11 @@ from app.services.consulta_service import (
 )
 from app.redis import redis_client
 
-from app.services.paciente_service import buscar_paciente_por_telefone, buscar_pacientes
+from app.services.paciente_service import (
+    buscar_paciente_por_telefone,
+    buscar_pacientes,
+    cadastrar_paciente,
+)
 from datetime import date
 
 load_dotenv()
@@ -94,6 +98,13 @@ Quando o paciente fizer uma pergunta sobre informações da clínica,
 como endereço, estacionamento, horário de funcionamento, formas de
 pagamento ou informações sobre os profissionais, use
 buscar_informacoes_clinica antes de responder.
+
+Se o paciente não estiver cadastrado e quiser agendar uma consulta:
+1. Solicite o nome completo e o e-mail do paciente.
+2. Quando possuir essas informações, use cadastrar_paciente_para_ia.
+3. Só depois de o cadastro ser criado com sucesso, continue o processo de agendamento.
+4. Nunca diga que o paciente foi cadastrado sem chamar cadastrar_paciente_para_ia.
+
 """
 
 def buscar_procedimentos_para_ia():
@@ -172,7 +183,14 @@ def conversar(numero: str, mensagem: str) -> str:
           return {"erro": "Não é possível remarcar consultas com menos de 24 horas de antecedência"}
 
       return remarcar_consulta_por_id(consulta_id, data, horario)
-    
+
+    def cadastrar_paciente_para_ia(nome: str, email: str):
+      return cadastrar_paciente(
+          nome=nome,
+          telefone=numero,
+          email=email,
+      )
+
     chat = chats.get(numero)
     if chat is None:
         paciente = buscar_pacientes(numero)
@@ -205,7 +223,8 @@ def conversar(numero: str, mensagem: str) -> str:
                     buscar_minhas_consultas,
                     cancelar_consulta_whatsapp,
                     remarcar_consulta_whatsapp,
-                    buscar_informacoes_clinica
+                    buscar_informacoes_clinica,
+                    cadastrar_paciente_para_ia
                 ]
             },
         )

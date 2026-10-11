@@ -79,6 +79,55 @@ Cadastra um novo paciente.
 
 ---
 
+## PUT /pacientes/{paciente_id}
+
+Atualiza nome, telefone e e-mail de um paciente existente. O telefone continua
+sendo normalizado pelo backend.
+
+### Request
+
+{
+  "nome": "Maria Oliveira",
+  "telefone": "(11) 99999-0000",
+  "email": "maria@email.com"
+}
+
+### Successful response
+
+{
+  "id": 3,
+  "nome": "Maria Oliveira",
+  "telefone": "5511999990000",
+  "email": "maria@email.com"
+}
+
+---
+
+## DELETE /pacientes/{paciente_id}
+
+Exclui um paciente que não possui consultas vinculadas. Para excluir também todo
+o histórico de consultas, use `excluir_consultas=true`.
+
+### Delete patient and appointments
+
+DELETE /pacientes/3?excluir_consultas=true
+
+### Successful response
+
+{
+  "mensagem": "Paciente excluído com sucesso",
+  "paciente_id": 3,
+  "consultas_excluidas": 4
+}
+
+### Patient with appointments
+
+{
+  "erro": "Este paciente possui consultas vinculadas. Confirme a exclusão das consultas para continuar"
+}
+
+---
+
 ## GET /procedimentos
 
 Lista os procedimentos ativos. O campo `disponivel` indica se existe pelo menos um
