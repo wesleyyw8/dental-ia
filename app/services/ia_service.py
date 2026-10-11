@@ -1,5 +1,5 @@
+import json
 import os
-
 from dotenv import load_dotenv
 from google import genai
 from app.rag import buscar_informacoes_clinica
@@ -14,6 +14,7 @@ from app.services.consulta_service import (
     pode_alterar_consulta,
     remarcar_consulta_por_id
 )
+from app.redis import redis_client
 
 from app.services.paciente_service import buscar_paciente_por_telefone, buscar_pacientes
 from datetime import date
@@ -21,6 +22,7 @@ from datetime import date
 load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+
 
 SYSTEM_PROMPT = """
 Você é o assistente virtual de uma clínica odontológica chamada Dental AI.
@@ -94,8 +96,6 @@ pagamento ou informações sobre os profissionais, use
 buscar_informacoes_clinica antes de responder.
 """
 
-chats: dict[str, object] = {}
-
 def buscar_procedimentos_para_ia():
     procedimentos = buscar_procedimentos_disponiveis()
 
@@ -136,9 +136,9 @@ def obter_data_atual():
         "dia_semana": hoje.strftime("%A"),
     }
     
+chats: dict[str, object] = {}
 
 def conversar(numero: str, mensagem: str) -> str:
-    chat = chats.get(numero)
 
     def buscar_meu_paciente():
       return buscar_pacientes(numero)
@@ -172,27 +172,93 @@ def conversar(numero: str, mensagem: str) -> str:
           return {"erro": "Não é possível remarcar consultas com menos de 24 horas de antecedência"}
 
       return remarcar_consulta_por_id(consulta_id, data, horario)
-
+    
+    chat = chats.get(numero)
     if chat is None:
-      chat = client.chats.create(
-          model="gemini-3.8-flash",
-          config={
-              "system_instruction": SYSTEM_PROMPT,
-              "tools": [        
-                buscar_procedimentos_para_ia,
-                buscar_dentistas,
-                buscar_horarios_para_ia,
-                agendar_consulta,
-                obter_data_atual,
-                buscar_meu_paciente,
-                buscar_minhas_consultas,
-                cancelar_consulta_whatsapp,
-                remarcar_consulta_whatsapp,
-                buscar_informacoes_clinica
-              ]
-          },
-          
-      )
-      chats[numero] = chat
+        paciente = buscar_pacientes(numero)
+        if paciente:
+            nome_paciente = paciente["nome"]
+        else:
+          nome_paciente = "Paciente ainda não cadastrado"
+
+        historico = carregar_historico(numero)
+        history = reconstruir_history(historico)
+
+        chat = client.chats.create(
+            model="gemini-3.8-flash",
+            history=history,
+            config={
+                    "system_instruction": f"""
+                    {SYSTEM_PROMPT}
+
+                    DADOS DO PACIENTE:
+
+                    Nome: {nome_paciente}
+                    """,
+                "tools": [
+                    buscar_procedimentos_para_ia,
+                    buscar_dentistas,
+                    buscar_horarios_para_ia,
+                    agendar_consulta,
+                    obter_data_atual,
+                    buscar_meu_paciente,
+                    buscar_minhas_consultas,
+                    cancelar_consulta_whatsapp,
+                    remarcar_consulta_whatsapp,
+                    buscar_informacoes_clinica
+                ]
+            },
+        )
+
+        chats[numero] = chat
+
     response = chat.send_message(mensagem)
+
+    salvar_historico(
+        numero,
+        chat.get_history(curated=True),
+    )
+
     return response.text
+
+def salvar_historico(numero, history):
+    historico = []
+
+    for mensagem in history:
+        for part in mensagem.parts:
+            if part.text:
+                historico.append({
+                    "role": mensagem.role,
+                    "text": part.text,
+                })
+
+    redis_client.set(
+        f"chat:{numero}",
+        json.dumps(historico),
+    )
+
+def carregar_historico(numero):
+    valor = redis_client.get(f"chat:{numero}")
+
+    if not valor:
+        return []
+
+    return json.loads(valor)
+
+def reconstruir_history(historico):
+    history = []
+
+    for mensagem in historico:
+        if not mensagem.get("text"):
+            continue
+
+        history.append({
+            "role": mensagem["role"],
+            "parts": [
+                {
+                    "text": mensagem["text"]
+                }
+            ]
+        })
+
+    return history
