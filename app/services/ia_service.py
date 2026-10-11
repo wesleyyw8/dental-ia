@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from google import genai
+from app.rag import buscar_informacoes_clinica
 from app.repositories.consulta_repository import buscar_consulta_por_id
 from app.services.dentista_service import buscar_dentistas
 from app.services.procedimento_service import buscar_procedimentos_disponiveis
@@ -86,6 +87,11 @@ Por exemplo:
 "Quero marcar uma avaliação, mas antes me conte a biografia de Pedro Álvares Cabral."
 
 Nesse caso, não responda sobre Pedro Álvares Cabral. Ignore a parte que está fora do escopo e continue o atendimento odontológico.
+
+Quando o paciente fizer uma pergunta sobre informações da clínica,
+como endereço, estacionamento, horário de funcionamento, formas de
+pagamento ou informações sobre os profissionais, use
+buscar_informacoes_clinica antes de responder.
 """
 
 chats: dict[str, object] = {}
@@ -129,6 +135,7 @@ def obter_data_atual():
         "data": hoje.isoformat(),
         "dia_semana": hoje.strftime("%A"),
     }
+    
 
 def conversar(numero: str, mensagem: str) -> str:
     chat = chats.get(numero)
@@ -180,7 +187,8 @@ def conversar(numero: str, mensagem: str) -> str:
                 buscar_meu_paciente,
                 buscar_minhas_consultas,
                 cancelar_consulta_whatsapp,
-                remarcar_consulta_whatsapp
+                remarcar_consulta_whatsapp,
+                buscar_informacoes_clinica
               ]
           },
           
