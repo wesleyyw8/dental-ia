@@ -2,6 +2,7 @@ import json
 import os
 from dotenv import load_dotenv
 from google import genai
+import redis
 from app.rag import buscar_informacoes_clinica
 from app.repositories.consulta_repository import buscar_consulta_por_id
 from app.services.dentista_service import buscar_dentistas
@@ -199,8 +200,11 @@ def conversar(numero: str, mensagem: str) -> str:
         else:
           nome_paciente = "Paciente ainda não cadastrado"
 
-        historico = carregar_historico(numero)
-        history = reconstruir_history(historico)
+        try:
+          historico = carregar_historico(numero)
+          history = reconstruir_history(historico)
+        except redis.RedisError:
+            history = []
 
         chat = client.chats.create(
             model="gemini-3.8-flash",
@@ -233,10 +237,13 @@ def conversar(numero: str, mensagem: str) -> str:
 
     response = chat.send_message(mensagem)
 
-    salvar_historico(
+    try:
+      salvar_historico(
         numero,
         chat.get_history(curated=True),
     )
+    except redis.RedisError:
+        pass
 
     return response.text
 
@@ -254,6 +261,7 @@ def salvar_historico(numero, history):
     redis_client.set(
         f"chat:{numero}",
         json.dumps(historico),
+        ex=86400
     )
 
 def carregar_historico(numero):

@@ -6,10 +6,11 @@ load_dotenv()
 
 
 def enviar_mensagem(to: str, mensagem: str):
+    print("🔥 ENVIAR_MENSAGEM FOI CHAMADO")
+    print("🔥 TO:", to)
+    print("🔥 TEXTO:", mensagem)
     phone_number_id = os.getenv("WHATSAPP_PHONE_NUMBER_ID")
     token = os.getenv("WHATSAPP_TOKEN")
-    print("TOKEN EXISTE:", bool(token))
-    print("TOKEN TAMANHO:", len(token) if token else 0)
 
     url = f"https://graph.facebook.com/v25.0/{phone_number_id}/messages"
 
@@ -28,16 +29,12 @@ def enviar_mensagem(to: str, mensagem: str):
     }
 
     print("PHONE NUMBER ID:", phone_number_id)
-    print("TO:", to)
 
     response = requests.post(
         url,
         headers=headers,
         json=payload
     )
-
-    print("STATUS:", response.status_code)
-    print("RESPONSE:", response.json())
 
     return response
 
