@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     stages {
-        stage('Teste') {
+        stage('unit testes') {
             steps {
-                echo 'Jenkins está funcionando! do arquivo !!'
+                sh 'uv run pytest'
             }
         }
     }

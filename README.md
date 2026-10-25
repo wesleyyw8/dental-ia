@@ -9,6 +9,14 @@ ngrok pra fazer o tunel do https pro localhost
 criar a rag: 
 uv run python -m app.criar_rag
 
+
+to run local:
+uv run uvicorn app.main:app --reload
+startar o postgre e o redis do docker
+docker compose up -d postgres redis
+npm frontent npm run dev
+
+
 ## 🧠 PLANO DE ESTUDOS
 
 ### 1. IA / BACKEND
