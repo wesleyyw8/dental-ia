@@ -1,4 +1,10 @@
 services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
   postgres:
     image: postgres:17
     container_name: dental-ai-postgres
@@ -14,6 +20,25 @@ services:
     volumes:
       - dental_data:/var/lib/postgresql/data
       - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+
+  redis:
+    image: redis:7
+    container_name: dental-ai-redis
+    ports:
+      - "6379:6379"
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    ports:
+      - "80:80"
+
+  jenkins:
+    build: ./jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
 
 volumes:
   dental_data:

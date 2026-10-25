@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export const api = axios.create({
   // O proxy local evita CORS sem exigir qualquer alteração no FastAPI.
-  baseURL: import.meta.env.DEV ? '/api' : (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'),
+  baseURL: '/api',
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' },
 })
