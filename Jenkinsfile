@@ -4,7 +4,14 @@ pipeline {
     stages {
         stage('unit testes') {
             steps {
-                sh 'uv run pytest'
+                withCredentials([
+                    string(
+                        credentialsId: 'google-api-key',
+                        variable: 'GOOGLE_API_KEY'
+                    )
+                ]) {
+                    sh 'uv run pytest'
+                }
             }
         }
     }
