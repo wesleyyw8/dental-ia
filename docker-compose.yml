@@ -5,9 +5,13 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    networks:
+      - dental-network
   postgres:
     image: postgres:17
     container_name: dental-ai-postgres
+    networks:
+    - dental-network
 
     environment:
       POSTGRES_DB: dental_ai
@@ -26,6 +30,8 @@ services:
     container_name: dental-ai-redis
     ports:
       - "6379:6379"
+    networks:
+      - dental-network
 
   nginx:
     build:
@@ -39,6 +45,11 @@ services:
     ports:
       - "8080:8080"
       - "50000:50000"
+    networks:
+      - dental-network
 
 volumes:
   dental_data:
+
+networks:
+  dental-network:
