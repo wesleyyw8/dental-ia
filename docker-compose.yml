@@ -42,11 +42,14 @@ services:
 
   jenkins:
     build: ./jenkins
+    user: root
     ports:
       - "8080:8080"
       - "50000:50000"
     networks:
       - dental-network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
   dental_data:
